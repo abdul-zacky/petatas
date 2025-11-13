@@ -43,10 +43,10 @@ export default function BottomNav() {
       active: pathname === '/storybook'
     },
     {
-      href: '/pusakaku',
+      href: '/my-pusaka',
       icon: User,
       label: 'PusakaKu',
-      active: pathname === '/pusakaku'
+      active: pathname === '/my-pusaka'
     }
   ];
 
