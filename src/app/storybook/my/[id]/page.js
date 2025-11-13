@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, BookOpen, Heart, Share2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Heart, Share2, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
 
 export default function MyStorybookPage() {
@@ -123,6 +123,70 @@ export default function MyStorybookPage() {
               />
             </div>
           ))}
+        </div>
+
+        {/* End of Story Section */}
+        <div className="px-4 py-12 text-center" style={{backgroundColor: '#F8F5F2'}}>
+          <div className="max-w-md mx-auto">
+            {/* End of Story Badge */}
+            <div className="inline-block px-6 py-2 rounded-full mb-6" style={{backgroundColor: '#473C8B'}}>
+              <p className="text-white font-bold text-lg">Akhir Cerita</p>
+            </div>
+
+            {/* Question */}
+            <h3 className="text-xl font-semibold mb-6" style={{color: '#1B1B1E'}}>
+              Anda suka dengan cerita ini?
+            </h3>
+
+            {/* Like and Share Buttons */}
+            <div className="flex gap-3 justify-center mb-8">
+              <button 
+                onClick={handleFavorite}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                  isFavorited ? 'scale-105' : 'hover:scale-105'
+                }`}
+                style={{
+                  backgroundColor: isFavorited ? '#ef4444' : 'white',
+                  color: isFavorited ? 'white' : '#473C8B',
+                  border: `2px solid ${isFavorited ? '#ef4444' : '#D4A373'}`
+                }}
+              >
+                <Heart className={`w-5 h-5 ${isFavorited ? 'fill-current' : ''}`} />
+                {isFavorited ? 'Disukai' : 'Suka'}
+              </button>
+              <button 
+                onClick={handleShare}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105"
+                style={{
+                  backgroundColor: 'white',
+                  color: '#473C8B',
+                  border: '2px solid #D4A373'
+                }}
+              >
+                <Share2 className="w-5 h-5" />
+                Bagikan
+              </button>
+            </div>
+
+            {/* UMKM Support Section */}
+            <div className="bg-white rounded-2xl p-6 border-2 shadow-lg" style={{borderColor: '#FFC857'}}>
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{backgroundColor: '#FFC857'}}>
+                  <ShoppingCart className="w-8 h-8" style={{color: '#473C8B'}} />
+                </div>
+              </div>
+              <p className="text-base leading-relaxed mb-4" style={{color: '#1B1B1E'}}>
+                Dukung UMKM lokal dan lihat produk yang berkaitan dengan budaya ini!
+              </p>
+              <button
+                onClick={() => router.push(`/marketplace?story=${storybook.id}`)}
+                className="w-full py-3 rounded-xl font-bold text-white transition-all hover:shadow-xl hover:scale-105"
+                style={{backgroundColor: '#473C8B'}}
+              >
+                Lihat Produk Berkaitan
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

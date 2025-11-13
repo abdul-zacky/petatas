@@ -159,7 +159,7 @@ export default function MyPusakaPage() {
   );
 
   const StorybookCard = ({ item }) => (
-    <Link href={`/storybook/${item.id}`}>
+    <Link href="/storybook/my/0debe010-4dfc-452b-bdce-caaca077d3c0">
       <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer">
         <div className="relative aspect-square">
           <Image

@@ -289,7 +289,7 @@ function StorybookCard({ story }) {
   };
 
   return (
-    <Link href={`/storybook/${story.id}`} className="block group">
+    <Link href="/storybook/my/0debe010-4dfc-452b-bdce-caaca077d3c0" className="block group">
       <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-lg">
         {/* Thumbnail */}
         <div className="relative w-full aspect-square">
