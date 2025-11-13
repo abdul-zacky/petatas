@@ -1,0 +1,440 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+
+export default function ARDebug2Page() {
+  const [arSupported, setArSupported] = useState(false);
+  const [sessionActive, setSessionActive] = useState(false);
+  const [surfaceFound, setSurfaceFound] = useState(false);
+  const [modelPlaced, setModelPlaced] = useState(false);
+
+  const canvasRef = useRef(null);
+  const rendererRef = useRef(null);
+  const xrSessionRef = useRef(null);
+  const hitTestSourceRef = useRef(null);
+  const reticleRef = useRef(null);
+  const placedModelRef = useRef(null);
+
+  // Check WebXR support
+  useEffect(() => {
+    const checkSupport = async () => {
+      if (!navigator.xr) {
+        setArSupported(false);
+        return;
+      }
+      try {
+        const supported = await navigator.xr.isSessionSupported('immersive-ar');
+        setArSupported(supported);
+      } catch (e) {
+        setArSupported(false);
+      }
+    };
+    checkSupport();
+  }, []);
+
+  // Initialize Three.js
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const init = async () => {
+      try {
+        const THREE = await import('three');
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+        const renderer = new THREE.WebGLRenderer({
+          canvas: canvasRef.current,
+          alpha: true,
+          antialias: true
+        });
+
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true;
+        
+        // Set reference space to 'local' for Samsung Tab S9 compatibility
+        if (renderer.xr.setReferenceSpaceType) {
+          renderer.xr.setReferenceSpaceType('local');
+        }
+
+        // Lighting
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbbb, 1);
+        scene.add(light);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(0, 1, 0);
+        scene.add(directionalLight);
+
+        // Create BIGGER, BRIGHTER reticle with pulsing animation
+        const reticleGeometry = new THREE.RingGeometry(0.12, 0.18, 32).rotateX(-Math.PI / 2);
+        const reticleMaterial = new THREE.MeshBasicMaterial({ 
+          color: 0x00ff00,
+          transparent: true,
+          opacity: 0.8
+        });
+        const reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
+        reticle.matrixAutoUpdate = false;
+        reticle.visible = false;
+        scene.add(reticle);
+        reticleRef.current = reticle;
+
+        rendererRef.current = { THREE, renderer, scene, camera, reticleMaterial };
+
+        let pulseTime = 0;
+        renderer.setAnimationLoop((timestamp, frame) => {
+          // Handle hit testing in AR mode
+          if (frame && xrSessionRef.current) {
+            const referenceSpace = renderer.xr.getReferenceSpace();
+            const reticle = reticleRef.current;
+
+            // Perform hit test to find surfaces
+            if (hitTestSourceRef.current && referenceSpace && reticle) {
+              const hitTestResults = frame.getHitTestResults(hitTestSourceRef.current);
+              if (hitTestResults.length > 0) {
+                const hit = hitTestResults[0];
+                const pose = hit.getPose(referenceSpace);
+                reticle.visible = true;
+                reticle.matrix.fromArray(pose.transform.matrix);
+                
+                // Pulsing animation for reticle
+                pulseTime += 0.05;
+                const scale = 1 + Math.sin(pulseTime) * 0.2;
+                reticle.scale.set(scale, scale, scale);
+                
+                // Update UI state
+                setSurfaceFound(true);
+              } else {
+                reticle.visible = false;
+                setSurfaceFound(false);
+              }
+            }
+
+            // Auto-rotate placed model
+            if (placedModelRef.current) {
+              placedModelRef.current.rotation.y += 0.01;
+            }
+          }
+
+          renderer.render(scene, camera);
+        });
+
+      } catch (error) {
+        console.error('Error initializing Three.js:', error);
+      }
+    };
+
+    init();
+
+    return () => {
+      if (rendererRef.current?.renderer) {
+        rendererRef.current.renderer.setAnimationLoop(null);
+      }
+    };
+  }, []);
+
+  // Start AR session
+  const startAR = async () => {
+    if (!rendererRef.current || !arSupported) {
+      alert('AR not ready or not supported');
+      return;
+    }
+
+    try {
+      const sessionOptions = {
+        requiredFeatures: ['hit-test'],
+        optionalFeatures: ['dom-overlay'],
+      };
+
+      const session = await navigator.xr.requestSession('immersive-ar', sessionOptions);
+      xrSessionRef.current = session;
+
+      await rendererRef.current.renderer.xr.setSession(session);
+
+      // Set up hit test source
+      const viewerSpace = await session.requestReferenceSpace('viewer');
+      const hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
+      hitTestSourceRef.current = hitTestSource;
+
+      // Load 3D model
+      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+      const loader = new GLTFLoader();
+      const modelUrl = window.location.origin + '/models/cartoon_crocodile_croco-roco.glb';
+      
+      loader.load(
+        modelUrl,
+        (gltf) => {
+          const model = gltf.scene;
+          model.scale.set(0.3, 0.3, 0.3);
+          rendererRef.current.loadedModel = model;
+        },
+        undefined,
+        (error) => console.error('Error loading model:', error)
+      );
+
+      // Set up tap-to-place
+      const controller = rendererRef.current.renderer.xr.getController(0);
+      controller.addEventListener('select', () => {
+        const reticle = reticleRef.current;
+        const model = rendererRef.current.loadedModel;
+        
+        if (!reticle || !reticle.visible || !model) return;
+        
+        // Remove previous model
+        if (placedModelRef.current) {
+          rendererRef.current.scene.remove(placedModelRef.current);
+        }
+        
+        // Clone and place new model
+        const newModel = model.clone();
+        newModel.position.setFromMatrixPosition(reticle.matrix);
+        rendererRef.current.scene.add(newModel);
+        placedModelRef.current = newModel;
+        setModelPlaced(true);
+      });
+      rendererRef.current.scene.add(controller);
+      
+      setSessionActive(true);
+
+      // Handle session end
+      session.addEventListener('end', () => {
+        setSessionActive(false);
+        setSurfaceFound(false);
+        setModelPlaced(false);
+        xrSessionRef.current = null;
+        hitTestSourceRef.current = null;
+        
+        if (placedModelRef.current) {
+          rendererRef.current.scene.remove(placedModelRef.current);
+          placedModelRef.current = null;
+        }
+        
+        if (reticleRef.current) {
+          reticleRef.current.visible = false;
+        }
+      });
+
+    } catch (error) {
+      console.error('AR Error:', error);
+      alert(`AR Error: ${error.message}`);
+    }
+  };
+
+  return (
+    <div className="min-h-screen" style={{backgroundColor: '#F8F5F2'}}>
+      {/* Canvas */}
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: sessionActive ? 'fixed' : 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          display: sessionActive ? 'block' : 'none',
+          zIndex: 0
+        }}
+      />
+
+      {/* AR Session Active Overlay with CLEAR VISUAL FEEDBACK */}
+      {sessionActive && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            zIndex: 1
+          }}
+        >
+          {/* Top status banner */}
+          <div style={{
+            backgroundColor: surfaceFound ? 'rgba(76, 175, 80, 0.95)' : 'rgba(255, 152, 0, 0.95)',
+            color: 'white',
+            padding: '1.5rem',
+            margin: '1rem',
+            borderRadius: '16px',
+            textAlign: 'center',
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            maxWidth: '90%',
+            alignSelf: 'center',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            animation: surfaceFound ? 'none' : 'pulse 2s infinite'
+          }}>
+            {surfaceFound ? (
+              <>
+                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>✅</div>
+                <div>Surface Found!</div>
+                <div style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>👆 TAP to place crocodile</div>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔍</div>
+                <div>Scanning for surface...</div>
+                <div style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>📱 Move device slowly</div>
+              </>
+            )}
+          </div>
+
+          {/* Model placed indicator */}
+          {modelPlaced && (
+            <div style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              backgroundColor: 'rgba(76, 175, 80, 0.95)',
+              color: 'white',
+              padding: '1rem 2rem',
+              borderRadius: '12px',
+              fontSize: '1.2rem',
+              fontWeight: 'bold',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              zIndex: 10
+            }}>
+              🦎 Crocodile Placed!
+            </div>
+          )}
+
+          {/* Bottom controls */}
+          <div style={{
+            backgroundColor: 'rgba(248, 245, 242, 0.95)',
+            padding: '1.5rem',
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '1rem'
+          }}>
+            <button
+              onClick={() => xrSessionRef.current?.end()}
+              style={{
+                backgroundColor: '#DC3545',
+                color: 'white',
+                padding: '1rem 2rem',
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: 'bold',
+                fontSize: '1.1rem',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              }}
+            >
+              🛑 End AR
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Regular UI */}
+      {!sessionActive && (
+        <>
+          <nav className="fixed top-0 w-full backdrop-blur-md z-50 border-b" style={{backgroundColor: 'rgba(248, 245, 242, 0.95)', borderColor: '#D4A373'}}>
+            <div className="px-4 sm:px-6 lg:px-8 py-4">
+              <div className="max-w-7xl mx-auto flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <h1 className="text-xl font-bold" style={{color: '#473C8B'}}>AR Debug v2 - Improved UX</h1>
+                </div>
+                <div className="flex items-center gap-4">
+                  <a href="/" className="text-sm font-medium transition" style={{color: '#473C8B'}}>
+                    ← Home
+                  </a>
+                  <a href="/ar-debug" className="text-sm font-medium transition" style={{color: '#473C8B'}}>
+                    Debug v1
+                  </a>
+                </div>
+              </div>
+            </div>
+          </nav>
+
+          <div className="pt-24 px-4 sm:px-6 lg:px-8 pb-16">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center space-y-4 mb-12">
+                <h2 className="text-4xl sm:text-5xl font-bold" style={{color: '#1B1B1E'}}>
+                  Improved AR Experience
+                </h2>
+                <p className="text-lg" style={{color: '#473C8B'}}>
+                  Better visual feedback for surface detection
+                </p>
+              </div>
+
+              {/* Start AR Button */}
+              <div className="rounded-3xl shadow-lg p-12 mb-8 text-center" style={{backgroundColor: 'white', border: '2px solid #D4A373'}}>
+                <button
+                  onClick={startAR}
+                  disabled={!arSupported}
+                  className="px-12 py-5 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-xl"
+                  style={{
+                    backgroundColor: arSupported ? '#473C8B' : '#ccc',
+                    boxShadow: arSupported ? '0 4px 12px rgba(71, 60, 139, 0.3)' : 'none'
+                  }}
+                >
+                  {arSupported ? '🚀 Start AR Experience' : '❌ AR Not Supported'}
+                </button>
+              </div>
+
+              {/* Improvements List */}
+              <div className="rounded-3xl p-8 backdrop-blur-sm mb-8" style={{backgroundColor: 'rgba(76, 175, 80, 0.1)', border: '2px solid #4CAF50'}}>
+                <h3 className="font-bold text-xl mb-4" style={{color: '#1B1B1E'}}>✨ UX Improvements:</h3>
+                <ul className="space-y-3" style={{color: '#473C8B'}}>
+                  <li className="flex items-start gap-2">
+                    <span className="text-2xl">🟢</span>
+                    <div>
+                      <strong>Bigger, Pulsing Reticle</strong><br />
+                      <span className="text-sm">Green ring is larger and animates to be more visible</span>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-2xl">🎨</span>
+                    <div>
+                      <strong>Color-Coded Status Banner</strong><br />
+                      <span className="text-sm">Orange = scanning, Green = surface found</span>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-2xl">💬</span>
+                    <div>
+                      <strong>Clear Instructions</strong><br />
+                      <span className="text-sm">Real-time guidance on what to do</span>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-2xl">✅</span>
+                    <div>
+                      <strong>Placement Confirmation</strong><br />
+                      <span className="text-sm">Visual feedback when model is placed</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              {/* How to Use */}
+              <div className="rounded-3xl p-8" style={{backgroundColor: 'rgba(71, 60, 139, 0.1)', border: '1px solid #473C8B'}}>
+                <h3 className="font-bold text-xl mb-4" style={{color: '#473C8B'}}>📱 How to Use:</h3>
+                <ol className="space-y-3 list-decimal list-inside" style={{color: '#473C8B'}}>
+                  <li><strong>Click "Start AR Experience"</strong> button</li>
+                  <li><strong>Allow camera permission</strong> if prompted</li>
+                  <li><strong>Move device slowly</strong> to scan the environment</li>
+                  <li><strong>Wait for green "Surface Found"</strong> message</li>
+                  <li><strong>Tap screen</strong> to place the crocodile</li>
+                  <li><strong>Place multiple times</strong> - old model auto-removes</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+      `}</style>
+    </div>
+  );
+}
