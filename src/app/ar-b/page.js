@@ -21,11 +21,12 @@ export default function ARBPage() {
   const speechSynthesisRef = useRef(null);
   const autoPlayTimerRef = useRef(null);
   const autoPlayRef = useRef(false); // Ref to track autoPlay state for callbacks
+  const currentSceneRef = useRef(0); // Ref to track current scene for callbacks
 
   const addLog = (message) => {
     const timestamp = new Date().toLocaleTimeString();
     const logMessage = `[${timestamp}] ${message}`;
-    setLogs(prev => [...prev, logMessage]); // Keep all logs
+    setLogs(prev => [...prev.slice(-20), logMessage]); // Keep last 20 logs
     console.log(message);
   };
 
@@ -264,10 +265,16 @@ export default function ARBPage() {
 
   // Switch to next scene
   const nextScene = async () => {
-    if (currentScene < scenes.length - 1) {
-      const newScene = currentScene + 1;
+    const currentSceneValue = currentSceneRef.current;
+    addLog(`🔍 Current scene before switch: ${currentSceneValue}`);
+
+    if (currentSceneValue < scenes.length - 1) {
+      const newScene = currentSceneValue + 1;
       addLog(`➡️ Switching to scene ${newScene + 1}: ${scenes[newScene].name}`);
+
+      // Update both state and ref
       setCurrentScene(newScene);
+      currentSceneRef.current = newScene;
 
       // Load new model if in AR
       if (sessionActive && rendererRef.current) {
@@ -335,7 +342,9 @@ export default function ARBPage() {
 
   // Switch to previous scene
   const prevScene = async () => {
-    if (currentScene > 0) {
+    const currentSceneValue = currentSceneRef.current;
+
+    if (currentSceneValue > 0) {
       // Stop auto-play when manually going back
       if (autoPlayTimerRef.current) {
         clearTimeout(autoPlayTimerRef.current);
@@ -344,37 +353,43 @@ export default function ARBPage() {
       setAutoPlay(false);
       autoPlayRef.current = false; // Sync ref
 
-      const newScene = currentScene - 1;
+      const newScene = currentSceneValue - 1;
+      addLog(`⬅️ Switching to scene ${newScene + 1}: ${scenes[newScene].name}`);
+
+      // Update both state and ref
       setCurrentScene(newScene);
-      console.log(`⬅️ Switching to scene ${newScene + 1}: ${scenes[newScene].name}`);
+      currentSceneRef.current = newScene;
 
       // Load new model if in AR
       if (sessionActive && rendererRef.current) {
         try {
-          console.log(`📦 Loading model for ${scenes[newScene].name}...`);
+          addLog(`📦 Loading model for ${scenes[newScene].name}...`);
           const model = await loadModelForScene(newScene);
           rendererRef.current.loadedModel = model;
-          console.log(`✅ Model loaded`);
+          addLog(`✅ Model loaded`);
 
           // If there's already a placed model, automatically replace it
-          if (placedModelRef.current && reticleRef.current) {
-            console.log('🔄 Auto-replacing placed model...');
+          if (placedModelRef.current) {
+            addLog('🔄 Auto-replacing placed model...');
+
+            // Save old position
+            const oldPosition = placedModelRef.current.position.clone();
 
             // Remove old model
             rendererRef.current.scene.remove(placedModelRef.current);
 
             // Place new model at same position as old one
             const newPlacedModel = model.clone();
-            newPlacedModel.position.copy(placedModelRef.current.position);
+            newPlacedModel.position.copy(oldPosition);
             rendererRef.current.scene.add(newPlacedModel);
             placedModelRef.current = newPlacedModel;
 
-            console.log(`✅ Model auto-replaced with ${scenes[newScene].name}`);
+            addLog(`✅ Model auto-replaced with ${scenes[newScene].name}`);
           } else {
-            console.log(`✅ Model ready to place (tap screen)`);
+            addLog(`✅ Model ready to place (tap screen)`);
           }
         } catch (e) {
-          console.error(`❌ Failed to load ${scenes[newScene].name}:`, e);
+          addLog(`❌ Failed to load ${scenes[newScene].name}: ${e.message}`);
         }
       }
 
@@ -444,6 +459,9 @@ export default function ARBPage() {
 
         const reticle = reticleRef.current;
         const model = rendererRef.current.loadedModel;
+        const sceneIndex = currentSceneRef.current; // Use ref instead of state
+
+        addLog(`📍 Current scene index: ${sceneIndex}`);
 
         if (!reticle || !reticle.visible) {
           addLog('⚠️ No surface detected. Move your device to find a surface.');
@@ -466,7 +484,7 @@ export default function ARBPage() {
         newModel.position.setFromMatrixPosition(reticle.matrix);
         rendererRef.current.scene.add(newModel);
         placedModelRef.current = newModel;
-        addLog(`✅ ${scenes[currentScene].name} placed at (${newModel.position.x.toFixed(2)}, ${newModel.position.y.toFixed(2)}, ${newModel.position.z.toFixed(2)})`);
+        addLog(`✅ ${scenes[sceneIndex].name} placed at (${newModel.position.x.toFixed(2)}, ${newModel.position.y.toFixed(2)}, ${newModel.position.z.toFixed(2)})`);
       });
       controllerRef.current = controller;
       rendererRef.current.scene.add(controller);
@@ -670,34 +688,14 @@ export default function ARBPage() {
               </div>
 
               {/* Console Logs */}
-              <div className="rounded-3xl p-6" style={{backgroundColor: 'rgba(0, 0, 0, 0.95)', border: '3px solid #4CAF50'}}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h3 className="font-bold text-xl" style={{color: '#00ff00'}}>📋 Console Logs</h3>
-                  <div style={{ color: '#00ff00', fontSize: '0.9rem', fontFamily: 'monospace' }}>
-                    Total: {logs.length} logs
-                  </div>
-                </div>
-                <div style={{
-                  maxHeight: '500px',
-                  overflowY: 'auto',
-                  backgroundColor: '#000',
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  border: '1px solid #00ff00'
-                }}>
+              <div className="rounded-3xl p-6" style={{backgroundColor: 'rgba(0, 0, 0, 0.9)', border: '2px solid #4CAF50'}}>
+                <h3 className="font-bold text-lg mb-3" style={{color: '#00ff00'}}>📋 Console Logs:</h3>
+                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                   {logs.length === 0 ? (
                     <div style={{ color: '#888', fontSize: '0.9rem' }}>No logs yet...</div>
                   ) : (
                     logs.map((log, index) => (
-                      <div key={index} style={{
-                        color: '#00ff00',
-                        fontSize: '0.85rem',
-                        fontFamily: 'monospace',
-                        marginBottom: '0.5rem',
-                        lineHeight: '1.4',
-                        paddingBottom: '0.5rem',
-                        borderBottom: index < logs.length - 1 ? '1px solid rgba(0, 255, 0, 0.1)' : 'none'
-                      }}>
+                      <div key={index} style={{ color: '#00ff00', fontSize: '0.85rem', fontFamily: 'monospace', marginBottom: '0.25rem' }}>
                         {log}
                       </div>
                     ))
@@ -858,40 +856,22 @@ export default function ARBPage() {
             {/* Debug Console Log */}
             <div style={{
               marginTop: '1rem',
-              backgroundColor: '#000',
-              borderRadius: '12px',
-              padding: '1rem',
-              maxHeight: '350px',
+              backgroundColor: '#1B1B1E',
+              borderRadius: '8px',
+              padding: '0.75rem',
+              maxHeight: '200px',
               overflowY: 'auto',
-              fontSize: '0.75rem',
-              fontFamily: 'monospace',
-              border: '2px solid #4CAF50'
+              fontSize: '0.7rem',
+              fontFamily: 'monospace'
             }}>
-              <div style={{
-                color: '#4CAF50',
-                marginBottom: '0.75rem',
-                fontWeight: 'bold',
-                fontSize: '0.9rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingBottom: '0.5rem',
-                borderBottom: '2px solid #4CAF50'
-              }}>
-                <span>📋 Debug Console</span>
-                <span style={{ fontSize: '0.7rem' }}>Total: {logs.length}</span>
+              <div style={{ color: '#4CAF50', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+                📋 Debug Console:
               </div>
               {logs.length === 0 ? (
-                <div style={{ color: '#888', fontSize: '0.7rem' }}>No logs yet...</div>
+                <div style={{ color: '#888', fontSize: '0.65rem' }}>No logs yet...</div>
               ) : (
-                logs.map((log, index) => (
-                  <div key={index} style={{
-                    color: '#4CAF50',
-                    marginBottom: '0.5rem',
-                    lineHeight: '1.4',
-                    paddingBottom: '0.5rem',
-                    borderBottom: index < logs.length - 1 ? '1px solid rgba(76, 175, 80, 0.2)' : 'none'
-                  }}>
+                logs.slice(-10).map((log, index) => (
+                  <div key={index} style={{ color: '#4CAF50', marginBottom: '0.25rem', lineHeight: '1.3' }}>
                     {log}
                   </div>
                 ))
