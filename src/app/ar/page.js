@@ -67,7 +67,6 @@ export default function ARPage() {
       try {
         setStatusMessage('Loading Three.js...');
         const THREE = await import('three');
-        const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
 
         // Create scene
         const scene = new THREE.Scene();
@@ -110,7 +109,7 @@ export default function ARPage() {
         reticleRef.current = reticle;
 
         // Animation loop
-        function animate(timestamp, frame) {
+        function animate(_timestamp, frame) {
           if (frame && xrSessionRef.current) {
             const referenceSpace = renderer.xr.getReferenceSpace();
 
@@ -159,7 +158,6 @@ export default function ARPage() {
 
   // Load model
   const loadModel = async (sceneIndex) => {
-    const THREE = await import('three');
     const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
 
     const loader = new GLTFLoader();
@@ -227,12 +225,20 @@ export default function ARPage() {
 
       const overlayElement = document.getElementById('ar-overlay');
 
-      // Request AR session
-      const session = await navigator.xr.requestSession('immersive-ar', {
-        requiredFeatures: ['hit-test'],
-        optionalFeatures: ['dom-overlay'],
-        domOverlay: overlayElement ? { root: overlayElement } : undefined
-      });
+      // Try with dom-overlay first, fallback without it
+      let session;
+      try {
+        session = await navigator.xr.requestSession('immersive-ar', {
+          requiredFeatures: ['hit-test'],
+          optionalFeatures: ['dom-overlay'],
+          domOverlay: { root: overlayElement }
+        });
+      } catch (e) {
+        console.log('Dom-overlay not supported, trying without it:', e);
+        session = await navigator.xr.requestSession('immersive-ar', {
+          requiredFeatures: ['hit-test']
+        });
+      }
 
       console.log('AR session created');
       xrSessionRef.current = session;
