@@ -13,6 +13,10 @@ export default function ARDebugPage() {
   const canvasRef = useRef(null);
   const rendererRef = useRef(null);
   const xrSessionRef = useRef(null);
+  const hitTestSourceRef = useRef(null);
+  const reticleRef = useRef(null);
+  const placedModelRef = useRef(null);
+  const controllerRef = useRef(null);
 
   const addLog = (message) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -101,9 +105,47 @@ export default function ARDebugPage() {
         const light = new THREE.HemisphereLight(0xffffff, 0xbbbbbb, 1);
         scene.add(light);
 
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(0, 1, 0);
+        scene.add(directionalLight);
+
+        // Create reticle (placement indicator)
+        const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
+        const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
+        reticle.matrixAutoUpdate = false;
+        reticle.visible = false;
+        scene.add(reticle);
+        reticleRef.current = reticle;
+        addLog('✅ Reticle (placement indicator) created');
+
         rendererRef.current = { THREE, renderer, scene, camera };
 
         renderer.setAnimationLoop((timestamp, frame) => {
+          // Handle hit testing in AR mode
+          if (frame && xrSessionRef.current) {
+            const referenceSpace = renderer.xr.getReferenceSpace();
+            const reticle = reticleRef.current;
+
+            // Perform hit test to find surfaces
+            if (hitTestSourceRef.current && referenceSpace && reticle) {
+              const hitTestResults = frame.getHitTestResults(hitTestSourceRef.current);
+              if (hitTestResults.length > 0) {
+                const hit = hitTestResults[0];
+                const pose = hit.getPose(referenceSpace);
+                reticle.visible = true;
+                reticle.matrix.fromArray(pose.transform.matrix);
+              } else {
+                reticle.visible = false;
+              }
+            }
+
+            // Auto-rotate placed model
+            if (placedModelRef.current) {
+              placedModelRef.current.rotation.y += 0.01;
+            }
+          }
+
           renderer.render(scene, camera);
         });
 
@@ -231,6 +273,66 @@ export default function ARDebugPage() {
           addLog(`⚠️ Hit-test source creation failed: ${e.message}`);
         }
       }
+
+      // Load 3D model
+      try {
+        addLog('🦎 Loading crocodile model...');
+        const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+        const loader = new GLTFLoader();
+        const modelUrl = window.location.origin + '/models/cartoon_crocodile_croco-roco.glb';
+        
+        loader.load(
+          modelUrl,
+          (gltf) => {
+            const model = gltf.scene;
+            model.scale.set(0.3, 0.3, 0.3);
+            // Store model but don't add to scene yet (will be placed on tap)
+            rendererRef.current.loadedModel = model;
+            addLog('✅ Crocodile model loaded! Tap screen to place it');
+          },
+          undefined,
+          (error) => {
+            addLog(`❌ Error loading model: ${error.message}`);
+          }
+        );
+      } catch (e) {
+        addLog(`❌ Error setting up model loader: ${e.message}`);
+      }
+
+      // Set up tap-to-place controller
+      const controller = rendererRef.current.renderer.xr.getController(0);
+      controller.addEventListener('select', () => {
+        addLog('👆 Screen tapped!');
+        
+        const reticle = reticleRef.current;
+        const model = rendererRef.current.loadedModel;
+        
+        if (!reticle || !reticle.visible) {
+          addLog('⚠️ No surface detected. Move your device to find a surface.');
+          return;
+        }
+        
+        if (!model) {
+          addLog('⚠️ Model not loaded yet. Please wait...');
+          return;
+        }
+        
+        // Remove previous model if exists
+        if (placedModelRef.current) {
+          rendererRef.current.scene.remove(placedModelRef.current);
+          addLog('🗑️ Removed previous model');
+        }
+        
+        // Clone and place new model
+        const newModel = model.clone();
+        newModel.position.setFromMatrixPosition(reticle.matrix);
+        rendererRef.current.scene.add(newModel);
+        placedModelRef.current = newModel;
+        addLog('✅ Crocodile placed! It will auto-rotate');
+      });
+      controllerRef.current = controller;
+      rendererRef.current.scene.add(controller);
+      addLog('✅ Tap-to-place controller ready');
       
       setSessionActive(true);
       setStatusMessage('AR Session Active');
@@ -243,6 +345,18 @@ export default function ARDebugPage() {
         setSessionActive(false);
         setStatusMessage('AR session ended');
         xrSessionRef.current = null;
+        hitTestSourceRef.current = null;
+        
+        // Clean up placed model
+        if (placedModelRef.current) {
+          rendererRef.current.scene.remove(placedModelRef.current);
+          placedModelRef.current = null;
+        }
+        
+        // Hide reticle
+        if (reticleRef.current) {
+          reticleRef.current.visible = false;
+        }
       });
 
     } catch (error) {
@@ -443,7 +557,9 @@ export default function ARDebugPage() {
             maxWidth: '90%',
             alignSelf: 'center'
           }}>
-            ✅ AR Session Active! Check console for enabled features
+            <div>✅ AR Session Active!</div>
+            <div style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>🦎 Move device to find surfaces</div>
+            <div style={{ fontSize: '0.9rem' }}>👆 Tap to place crocodile</div>
           </div>
 
           <div style={{
