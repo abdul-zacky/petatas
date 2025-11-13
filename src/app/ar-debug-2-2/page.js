@@ -29,12 +29,6 @@ export default function ARDebug2Page() {
 
   // Scenes with models and scripts
   const scenes = [
-    // 1. Apa itu Pacu Jalur & Festival
-    {
-      model: '/models/boat.glb',
-      script: 'Pacu Jalur adalah tradisi balap perahu panjang khas Kuantan Singingi, Riau. Awalnya sebagai ajang transportasi dan pengangkutan hasil bumi, kini Pacu Jalur menjadi festival budaya, hiburan rakyat, dan ajang adu cepat yang meriah.',
-      scale: 0.5
-    },
     // 2. Sungai Batang Kuantan sebagai jalur transportasi
     {
       model: '/models/river.glb',
@@ -74,27 +68,6 @@ export default function ARDebug2Page() {
     console.log(logMsg);
   };
 
-  // Update subtitle text dynamically
-  const updateSubtitleText = async (text) => {
-    if (!rendererRef.current?.createSubtitleSprite || !micIndicatorRef.current) return;
-    
-    try {
-      // Remove old subtitle sprite
-      if (micIndicatorRef.current) {
-        rendererRef.current.scene.remove(micIndicatorRef.current);
-      }
-      
-      // Create new subtitle with updated text
-      const newSubtitle = await rendererRef.current.createSubtitleSprite(text);
-      newSubtitle.visible = isSpeaking;
-      rendererRef.current.scene.add(newSubtitle);
-      micIndicatorRef.current = newSubtitle;
-      addLog('✅ Subtitle text updated');
-    } catch (e) {
-      addLog('⚠️ Failed to update subtitle: ' + e.message);
-    }
-  };
-
   // Text-to-speech function with auto scene advance
   const speakText = (text, sceneIndex) => {
     if (typeof window === 'undefined' || !window.speechSynthesis) {
@@ -115,9 +88,6 @@ export default function ARDebug2Page() {
     utterance.onstart = () => {
       setIsSpeaking(true);
       addLog(`✅ Speech started for scene ${sceneIndex + 1}`);
-      
-      // Update subtitle text with current scene script
-      updateSubtitleText(text);
     };
 
     utterance.onend = () => {
@@ -304,128 +274,88 @@ export default function ARDebug2Page() {
           return sprite;
         };
 
-        // OLD MIC ICON (Saved for reference)
-        // const createMicIconSprite = () => {
-        //   const canvas = document.createElement('canvas');
-        //   const context = canvas.getContext('2d');
-        //   canvas.width = 256;
-        //   canvas.height = 256;
-        //   context.clearRect(0, 0, canvas.width, canvas.height);
-        //   const centerX = canvas.width / 2;
-        //   const centerY = canvas.height / 2;
-        //   // White circle background
-        //   context.fillStyle = '#FFFFFF';
-        //   context.beginPath();
-        //   context.arc(centerX, centerY, 90, 0, Math.PI * 2);
-        //   context.fill();
-        //   // Microphone icon details...
-        //   const texture = new THREE.CanvasTexture(canvas);
-        //   const spriteMaterial = new THREE.SpriteMaterial({ 
-        //     map: texture, transparent: true, opacity: 0.95,
-        //     depthTest: false, depthWrite: false
-        //   });
-        //   const sprite = new THREE.Sprite(spriteMaterial);
-        //   sprite.scale.set(0.2, 0.2, 1);
-        //   return sprite;
-        // };
-
-        // Function to create game-style subtitle UI with character avatar
-        const createSubtitleSprite = async (text = 'Loading...') => {
+        // Function to create microphone icon sprite
+        const createMicIconSprite = () => {
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d');
-          canvas.width = 1024;
-          canvas.height = 200;
+          canvas.width = 256;
+          canvas.height = 256;
           
-          // Clear background
+          // Clear background (transparent)
           context.clearRect(0, 0, canvas.width, canvas.height);
           
-          // Draw semi-transparent dark background (like game subtitles)
-          context.fillStyle = 'rgba(0, 0, 0, 0.85)';
-          context.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 20);
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          
+          // Draw white circle background
+          context.fillStyle = '#FFFFFF';
+          context.beginPath();
+          context.arc(centerX, centerY, 90, 0, Math.PI * 2);
           context.fill();
           
-          // Draw border/outline
-          context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+          // Add subtle shadow/glow
+          context.shadowColor = 'rgba(0, 0, 0, 0.3)';
+          context.shadowBlur = 20;
+          context.shadowOffsetX = 0;
+          context.shadowOffsetY = 5;
+          
+          // Redraw circle with shadow
+          context.beginPath();
+          context.arc(centerX, centerY, 90, 0, Math.PI * 2);
+          context.fill();
+          
+          // Reset shadow
+          context.shadowColor = 'transparent';
+          context.shadowBlur = 0;
+          context.shadowOffsetX = 0;
+          context.shadowOffsetY = 0;
+          
+          // Draw microphone icon (dark color for contrast)
+          context.strokeStyle = '#1E3A8A';
+          context.fillStyle = '#1E3A8A';
+          context.lineWidth = 10;
+          context.lineCap = 'round';
+          context.lineJoin = 'round';
+          
+          // Mic capsule (rounded rectangle)
+          context.beginPath();
+          context.roundRect(centerX - 22, centerY - 45, 44, 70, 22);
+          context.fill();
+          
+          // Horizontal lines on mic capsule for detail
+          context.strokeStyle = '#3B82F6';
           context.lineWidth = 3;
-          context.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 20);
+          for (let i = 0; i < 3; i++) {
+            const y = centerY - 30 + (i * 20);
+            context.beginPath();
+            context.moveTo(centerX - 15, y);
+            context.lineTo(centerX + 15, y);
+            context.stroke();
+          }
+          
+          // Reset style for stand
+          context.strokeStyle = '#1E3A8A';
+          context.lineWidth = 10;
+          
+          // Mic stand arc
+          context.beginPath();
+          context.arc(centerX, centerY + 25, 30, 0, Math.PI, false);
           context.stroke();
           
-          // Load and draw avatar image
-          try {
-            const avatarImg = new Image();
-            avatarImg.src = '/2.svg';
-            await new Promise((resolve, reject) => {
-              avatarImg.onload = resolve;
-              avatarImg.onerror = reject;
-              setTimeout(reject, 2000); // Timeout after 2s
-            });
-            
-            // Draw circular avatar on the left
-            const avatarSize = 120;
-            const avatarX = 80;
-            const avatarY = canvas.height / 2;
-            
-            context.save();
-            context.beginPath();
-            context.arc(avatarX, avatarY, avatarSize / 2, 0, Math.PI * 2);
-            context.clip();
-            context.drawImage(avatarImg, avatarX - avatarSize / 2, avatarY - avatarSize / 2, avatarSize, avatarSize);
-            context.restore();
-            
-            // Draw white circle border around avatar
-            context.strokeStyle = '#FFFFFF';
-            context.lineWidth = 4;
-            context.beginPath();
-            context.arc(avatarX, avatarY, avatarSize / 2 + 2, 0, Math.PI * 2);
-            context.stroke();
-          } catch (e) {
-            // If avatar fails to load, draw placeholder
-            context.fillStyle = '#3B82F6';
-            context.beginPath();
-            context.arc(80, canvas.height / 2, 60, 0, Math.PI * 2);
-            context.fill();
-            
-            context.fillStyle = '#FFFFFF';
-            context.font = 'Bold 50px Arial';
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText('🎙️', 80, canvas.height / 2);
-          }
+          // Vertical stand line
+          context.beginPath();
+          context.moveTo(centerX, centerY + 25);
+          context.lineTo(centerX, centerY + 55);
+          context.stroke();
           
-          // Draw character name (optional)
-          context.fillStyle = '#FFC857';
-          context.font = 'Bold 28px Arial';
-          context.textAlign = 'left';
-          context.textBaseline = 'top';
-          context.fillText('Narrator', 170, 30);
-          
-          // Draw subtitle text (word-wrapped)
-          context.fillStyle = '#FFFFFF';
-          context.font = '24px Arial';
-          context.textAlign = 'left';
-          context.textBaseline = 'top';
-          
-          const maxWidth = canvas.width - 200;
-          const lineHeight = 32;
-          const words = text.split(' ');
-          let line = '';
-          let y = 70;
-          
-          for (let i = 0; i < words.length; i++) {
-            const testLine = line + words[i] + ' ';
-            const metrics = context.measureText(testLine);
-            if (metrics.width > maxWidth && i > 0) {
-              context.fillText(line, 170, y);
-              line = words[i] + ' ';
-              y += lineHeight;
-            } else {
-              line = testLine;
-            }
-          }
-          context.fillText(line, 170, y);
+          // Base (wider and more prominent)
+          context.lineWidth = 12;
+          context.beginPath();
+          context.moveTo(centerX - 35, centerY + 55);
+          context.lineTo(centerX + 35, centerY + 55);
+          context.stroke();
           
           const texture = new THREE.CanvasTexture(canvas);
-          texture.needsUpdate = true;
           const spriteMaterial = new THREE.SpriteMaterial({ 
             map: texture,
             transparent: true,
@@ -434,7 +364,7 @@ export default function ARDebug2Page() {
             depthWrite: false
           });
           const sprite = new THREE.Sprite(spriteMaterial);
-          sprite.scale.set(1.2, 0.24, 1); // Wider for subtitle style
+          sprite.scale.set(0.2, 0.2, 1);
           return sprite;
         };
 
@@ -499,14 +429,14 @@ export default function ARDebug2Page() {
         textSpriteRef.current = { scanning: scanningText, createTextSprite };
         addLog('✅ Text sprites created');
 
-        // Create subtitle indicator sprite (game-style with avatar)
-        const subtitleIndicator = await createSubtitleSprite('Listening to the story...');
-        subtitleIndicator.visible = false;
-        scene.add(subtitleIndicator);
-        micIndicatorRef.current = subtitleIndicator;
-        addLog('✅ Subtitle indicator created');
+        // Create microphone indicator sprite
+        const micIndicator = createMicIconSprite();
+        micIndicator.visible = false;
+        scene.add(micIndicator);
+        micIndicatorRef.current = micIndicator;
+        addLog('✅ Microphone indicator created');
 
-        rendererRef.current = { THREE, renderer, scene, camera, reticleMaterial, statusMaterial, createTextSprite, createSubtitleSprite };
+        rendererRef.current = { THREE, renderer, scene, camera, reticleMaterial, statusMaterial, createTextSprite };
         addLog('✅ Three.js initialized successfully');
 
         let pulseTime = 0;
@@ -624,23 +554,23 @@ export default function ARDebug2Page() {
               placedModelRef.current.rotation.y += 0.01;
             }
 
-            // Position and animate subtitle indicator
-            const subtitleIndicator = micIndicatorRef.current;
-            if (subtitleIndicator && camera) {
+            // Position and animate microphone indicator
+            const micIndicator = micIndicatorRef.current;
+            if (micIndicator && camera) {
               const cameraDirection = new THREE.Vector3();
               camera.getWorldDirection(cameraDirection);
-              const subtitlePosition = camera.position.clone();
-              subtitlePosition.add(cameraDirection.multiplyScalar(1.0)); // 1m in front
-              subtitlePosition.y -= 0.4; // Bottom of view (subtitle position)
-              subtitleIndicator.position.copy(subtitlePosition);
-              subtitleIndicator.lookAt(camera.position);
+              const micPosition = camera.position.clone();
+              micPosition.add(cameraDirection.multiplyScalar(0.8)); // 0.8m in front
+              micPosition.y -= 0.35; // Bottom of view
+              micIndicator.position.copy(micPosition);
+              micIndicator.lookAt(camera.position);
               
-              // Gentle fade/glow animation when speaking (more subtle for subtitles)
-              if (subtitleIndicator.visible) {
-                // Maintain consistent scale (no pulsing for subtitles)
-                subtitleIndicator.scale.set(1.2, 0.24, 1);
-                // Very subtle opacity variation for "speaking" effect
-                subtitleIndicator.material.opacity = 0.92 + Math.sin(timestamp * 0.004) * 0.05;
+              // Pulsing animation when speaking
+              if (micIndicator.visible) {
+                const pulseScale = 0.2 + Math.sin(timestamp * 0.008) * 0.025;
+                micIndicator.scale.set(pulseScale, pulseScale, 1);
+                // Pulse opacity
+                micIndicator.material.opacity = 0.9 + Math.sin(timestamp * 0.006) * 0.1;
               }
             }
           }
@@ -667,9 +597,9 @@ export default function ARDebug2Page() {
     if (micIndicatorRef.current) {
       micIndicatorRef.current.visible = isSpeaking;
       if (isSpeaking) {
-        addLog('💬 Subtitle displayed');
+        addLog('🎤 Mic indicator shown');
       } else {
-        addLog('💬 Subtitle hidden');
+        addLog('🎤 Mic indicator hidden');
       }
     }
   }, [isSpeaking]);
