@@ -142,13 +142,7 @@ export default function ARDebugPage() {
       addLog('✅ AR session created successfully!');
       xrSessionRef.current = session;
 
-      await rendererRef.current.renderer.xr.setSession(session);
-      
-      setSessionActive(true);
-      setStatusMessage('AR Session Active');
-      addLog('✅ Session set on renderer');
-
-      // Log session details
+      // Log session details BEFORE setting up reference space
       addLog(`Session mode: ${session.mode}`);
       if (session.enabledFeatures) {
         const features = Array.from(session.enabledFeatures);
@@ -165,6 +159,45 @@ export default function ARDebugPage() {
       } else {
         addLog('Could not retrieve enabled features');
       }
+
+      // Test all possible reference space types
+      addLog('🔍 Testing available reference space types...');
+      const spaceTypes = ['viewer', 'local', 'local-floor', 'bounded-floor', 'unbounded'];
+      const supportedSpaces = [];
+      
+      for (const spaceType of spaceTypes) {
+        try {
+          const testSpace = await session.requestReferenceSpace(spaceType);
+          addLog(`✅ ${spaceType}: SUPPORTED`);
+          supportedSpaces.push(spaceType);
+        } catch (e) {
+          addLog(`❌ ${spaceType}: NOT SUPPORTED (${e.message})`);
+        }
+      }
+
+      if (supportedSpaces.length === 0) {
+        throw new Error('No reference space types are supported on this device');
+      }
+
+      addLog(`📍 Using reference space: ${supportedSpaces[0]}`);
+      const referenceSpace = await session.requestReferenceSpace(supportedSpaces[0]);
+
+      // Set up hit test source if hit-test is enabled
+      if (session.enabledFeatures && Array.from(session.enabledFeatures).includes('hit-test')) {
+        try {
+          addLog('🎯 Setting up hit-test source...');
+          const hitTestSource = await session.requestHitTestSource({ space: referenceSpace });
+          addLog('✅ Hit-test source created successfully');
+        } catch (e) {
+          addLog(`⚠️ Hit-test source creation failed: ${e.message}`);
+        }
+      }
+
+      await rendererRef.current.renderer.xr.setSession(session);
+      
+      setSessionActive(true);
+      setStatusMessage('AR Session Active');
+      addLog('✅ Session set on renderer');
 
       // Handle session end
       session.addEventListener('end', () => {
@@ -307,7 +340,16 @@ export default function ARDebugPage() {
                     <strong>Browser:</strong> {typeof navigator !== 'undefined' ? navigator.userAgent.split(' ').slice(-2).join(' ') : 'Unknown'}
                   </div>
                   <div className="text-sm" style={{color: '#473C8B'}}>
+                    <strong>Platform:</strong> {typeof navigator !== 'undefined' ? navigator.platform : 'Unknown'}
+                  </div>
+                  <div className="text-sm" style={{color: '#473C8B'}}>
                     <strong>navigator.xr:</strong> {typeof navigator !== 'undefined' && navigator.xr ? 'Available' : 'Not Available'}
+                  </div>
+                  <div className="text-sm" style={{color: '#473C8B'}}>
+                    <strong>Device Memory:</strong> {typeof navigator !== 'undefined' && navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Unknown'}
+                  </div>
+                  <div className="text-sm" style={{color: '#473C8B'}}>
+                    <strong>Hardware Concurrency:</strong> {typeof navigator !== 'undefined' ? navigator.hardwareConcurrency : 'Unknown'}
                   </div>
                   <div className="text-sm" style={{color: '#473C8B'}}>
                     <strong>Required Features:</strong> ['hit-test']
