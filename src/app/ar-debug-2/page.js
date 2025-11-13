@@ -49,8 +49,8 @@ export default function ARDebug2Page() {
     // },
     // 4. Perahu dihias kepala buaya/ular
     {
-      model: '/models/cartoon_crocodile_croco-roco.glb',
-      script: 'Perahu memanjang ini dihias dengan ornamen kepala buaya atau ular, melambangkan budaya setempat.',
+      model: '/models/rumahgadang.glb',
+      script: ' Rumah Gadang adalah rumah adat Minangkabau yang khas dengan atapnya yang melengkung seperti tanduk kerbau.',
       scale: 0.3
     },
     // 5. Tongkang kerajaan
