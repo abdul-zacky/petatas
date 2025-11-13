@@ -8,6 +8,8 @@ export default function ARDebug2Page() {
   const [surfaceFound, setSurfaceFound] = useState(false);
   const [modelPlaced, setModelPlaced] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [currentScene, setCurrentScene] = useState(0);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [logs, setLogs] = useState([]);
 
   const canvasRef = useRef(null);
@@ -19,12 +21,175 @@ export default function ARDebug2Page() {
   const statusIndicatorRef = useRef(null);
   const textSpriteRef = useRef(null);
   const successTimerRef = useRef(null);
+  const speechSynthesisRef = useRef(null);
+  const autoPlayTimerRef = useRef(null);
+  const currentSceneRef = useRef(0);
+  const hasSpokenRef = useRef(false);
+  const micIndicatorRef = useRef(null);
+
+  // Scenes with models and scripts
+  const scenes = [
+    {
+      model: '/models/cartoon_crocodile_croco-roco.glb',
+      script: 'In ancient Indonesian waters, crocodiles were revered as sacred creatures, symbolizing strength and protection.',
+      scale: 0.3,
+      name: 'Sacred Crocodile'
+    },
+    {
+      model: '/models/banana.glb',
+      script: 'Bananas have been cultivated in Indonesia for thousands of years as a staple food, providing nutrition to generations.',
+      scale: 0.5,
+      name: 'Ancient Banana'
+    }
+  ];
 
   const addLog = (message) => {
     const timestamp = new Date().toLocaleTimeString();
     const logMsg = `[${timestamp}] ${message}`;
     setLogs(prev => [...prev, logMsg]);
     console.log(logMsg);
+  };
+
+  // Text-to-speech function with auto scene advance
+  const speakText = (text, sceneIndex) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      addLog('⚠️ Speech synthesis not supported');
+      return;
+    }
+
+    addLog(`🔊 Starting speech for scene ${sceneIndex + 1}: ${scenes[sceneIndex].name}`);
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      addLog(`✅ Speech started for scene ${sceneIndex + 1}`);
+    };
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      addLog(`🔇 Speech ended for scene ${sceneIndex + 1}`);
+
+      // Check if there's a next scene
+      if (sceneIndex < scenes.length - 1) {
+        addLog('✅ Scheduling next scene in 3 seconds...');
+
+        // Clear any existing timer
+        if (autoPlayTimerRef.current) {
+          clearTimeout(autoPlayTimerRef.current);
+        }
+
+        // Schedule next scene
+        autoPlayTimerRef.current = setTimeout(() => {
+          addLog('⏰ Timer fired! Switching to next scene...');
+          nextScene();
+        }, 3000);
+      } else {
+        // Last scene
+        addLog('📍 Last scene reached - all stories complete!');
+      }
+    };
+
+    utterance.onerror = (event) => {
+      setIsSpeaking(false);
+      addLog('❌ Speech error: ' + event.error);
+    };
+
+    speechSynthesisRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Load model for specific scene
+  const loadModelForScene = async (sceneIndex) => {
+    try {
+      const scene = scenes[sceneIndex];
+      addLog(`🔧 Loading ${scene.name} from ${scene.model}...`);
+
+      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+      const loader = new GLTFLoader();
+      const modelUrl = window.location.origin + scene.model;
+      addLog(`📡 Model URL: ${modelUrl}`);
+
+      return new Promise((resolve, reject) => {
+        loader.load(
+          modelUrl,
+          (gltf) => {
+            const model = gltf.scene;
+            model.scale.set(scene.scale, scene.scale, scene.scale);
+            addLog(`✅ ${scene.name} loaded successfully!`);
+            resolve(model);
+          },
+          (progress) => {
+            if (progress.lengthComputable) {
+              const percent = (progress.loaded / progress.total * 100).toFixed(0);
+              addLog(`⏳ Loading ${scene.name}: ${percent}%`);
+            }
+          },
+          (error) => {
+            addLog(`❌ Error loading ${scene.name}: ${error.message}`);
+            reject(error);
+          }
+        );
+      });
+    } catch (e) {
+      addLog(`❌ Error setting up loader: ${e.message}`);
+      throw e;
+    }
+  };
+
+  // Switch to next scene
+  const nextScene = async () => {
+    if (currentSceneRef.current < scenes.length - 1) {
+      const newScene = currentSceneRef.current + 1;
+      addLog(`➡️ Switching to scene ${newScene + 1}: ${scenes[newScene].name}`);
+      setCurrentScene(newScene);
+      currentSceneRef.current = newScene;
+
+      // Load new model
+      if (sessionActive && rendererRef.current) {
+        try {
+          addLog(`📦 Loading ${scenes[newScene].name}...`);
+          const model = await loadModelForScene(newScene);
+          rendererRef.current.loadedModel = model;
+          addLog(`✅ Model loaded into memory`);
+
+          // If there's already a placed model, automatically replace it
+          if (placedModelRef.current) {
+            addLog(`🔄 Auto-replacing model...`);
+
+            // Save old position
+            const oldPosition = placedModelRef.current.position.clone();
+
+            // Remove old model
+            rendererRef.current.scene.remove(placedModelRef.current);
+            addLog(`🗑️ Old model removed from scene`);
+
+            // Place new model at same position
+            const newPlacedModel = model.clone();
+            newPlacedModel.position.copy(oldPosition);
+            rendererRef.current.scene.add(newPlacedModel);
+            placedModelRef.current = newPlacedModel;
+
+            addLog(`✅ ${scenes[newScene].name} placed at (${oldPosition.x.toFixed(2)}, ${oldPosition.y.toFixed(2)}, ${oldPosition.z.toFixed(2)})`);
+            
+            // Speak new scene script
+            speakText(scenes[newScene].script, newScene);
+          } else {
+            addLog(`⚠️ No model placed yet (tap to place)`);
+          }
+        } catch (e) {
+          addLog(`❌ Failed to load: ${e.message}`);
+        }
+      }
+    } else {
+      addLog('📍 Last scene reached');
+    }
   };
 
   // Check WebXR support
@@ -91,6 +256,59 @@ export default function ARDebug2Page() {
           return sprite;
         };
 
+        // Function to create microphone icon sprite
+        const createMicIconSprite = () => {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = 256;
+          canvas.height = 256;
+          
+          // Clear background (transparent)
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          
+          // Draw microphone icon
+          context.strokeStyle = '#FFFFFF';
+          context.fillStyle = '#FFFFFF';
+          context.lineWidth = 12;
+          
+          // Mic body (rounded rectangle)
+          context.beginPath();
+          context.roundRect(centerX - 30, centerY - 60, 60, 80, 30);
+          context.fill();
+          
+          // Mic stand
+          context.beginPath();
+          context.arc(centerX, centerY + 35, 35, 0, Math.PI, false);
+          context.stroke();
+          
+          context.beginPath();
+          context.moveTo(centerX, centerY + 35);
+          context.lineTo(centerX, centerY + 60);
+          context.stroke();
+          
+          // Base
+          context.lineWidth = 14;
+          context.beginPath();
+          context.moveTo(centerX - 30, centerY + 60);
+          context.lineTo(centerX + 30, centerY + 60);
+          context.stroke();
+          
+          const texture = new THREE.CanvasTexture(canvas);
+          const spriteMaterial = new THREE.SpriteMaterial({ 
+            map: texture,
+            transparent: true,
+            opacity: 0.95,
+            depthTest: false,
+            depthWrite: false
+          });
+          const sprite = new THREE.Sprite(spriteMaterial);
+          sprite.scale.set(0.15, 0.15, 1);
+          return sprite;
+        };
+
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
 
@@ -151,6 +369,13 @@ export default function ARDebug2Page() {
         scene.add(scanningText);
         textSpriteRef.current = { scanning: scanningText, createTextSprite };
         addLog('✅ Text sprites created');
+
+        // Create microphone indicator sprite
+        const micIndicator = createMicIconSprite();
+        micIndicator.visible = false;
+        scene.add(micIndicator);
+        micIndicatorRef.current = micIndicator;
+        addLog('✅ Microphone indicator created');
 
         rendererRef.current = { THREE, renderer, scene, camera, reticleMaterial, statusMaterial, createTextSprite };
         addLog('✅ Three.js initialized successfully');
@@ -269,6 +494,26 @@ export default function ARDebug2Page() {
             if (placedModelRef.current) {
               placedModelRef.current.rotation.y += 0.01;
             }
+
+            // Position and animate microphone indicator
+            const micIndicator = micIndicatorRef.current;
+            if (micIndicator && camera) {
+              const cameraDirection = new THREE.Vector3();
+              camera.getWorldDirection(cameraDirection);
+              const micPosition = camera.position.clone();
+              micPosition.add(cameraDirection.multiplyScalar(0.8)); // 0.8m in front
+              micPosition.y -= 0.35; // Bottom of view
+              micIndicator.position.copy(micPosition);
+              micIndicator.lookAt(camera.position);
+              
+              // Pulsing animation when speaking
+              if (micIndicator.visible) {
+                const pulseScale = 0.15 + Math.sin(timestamp * 0.008) * 0.02;
+                micIndicator.scale.set(pulseScale, pulseScale, 1);
+                // Pulse opacity
+                micIndicator.material.opacity = 0.85 + Math.sin(timestamp * 0.006) * 0.15;
+              }
+            }
           }
 
           renderer.render(scene, camera);
@@ -287,6 +532,18 @@ export default function ARDebug2Page() {
       }
     };
   }, []);
+
+  // Sync mic indicator with isSpeaking state
+  useEffect(() => {
+    if (micIndicatorRef.current) {
+      micIndicatorRef.current.visible = isSpeaking;
+      if (isSpeaking) {
+        addLog('🎤 Mic indicator shown');
+      } else {
+        addLog('🎤 Mic indicator hidden');
+      }
+    }
+  }, [isSpeaking]);
 
   // Start AR session
   const startAR = async () => {
@@ -324,26 +581,15 @@ export default function ARDebug2Page() {
       hitTestSourceRef.current = hitTestSource;
       addLog('✅ Hit-test ready - start scanning!');
 
-      // Load 3D model
-      addLog('🦎 Loading crocodile model...');
-      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
-      const loader = new GLTFLoader();
-      const modelUrl = window.location.origin + '/models/cartoon_crocodile_croco-roco.glb';
-      
-      loader.load(
-        modelUrl,
-        (gltf) => {
-          const model = gltf.scene;
-          model.scale.set(0.3, 0.3, 0.3);
-          rendererRef.current.loadedModel = model;
-          addLog('✅ Crocodile model loaded!');
-        },
-        undefined,
-        (error) => {
-          addLog(`❌ Model load error: ${error.message}`);
-          console.error('Error loading model:', error);
-        }
-      );
+      // Load initial model (first scene)
+      addLog(`📦 Loading initial model: ${scenes[currentScene].name}...`);
+      try {
+        const model = await loadModelForScene(currentScene);
+        rendererRef.current.loadedModel = model;
+        addLog(`✅ ${scenes[currentScene].name} ready! Tap screen to place it`);
+      } catch (e) {
+        addLog(`❌ Failed to load initial model: ${e.message}`);
+      }
 
       // Set up tap-to-place
       const controller = rendererRef.current.renderer.xr.getController(0);
@@ -362,6 +608,9 @@ export default function ARDebug2Page() {
           return;
         }
         
+        // Check if this is first placement
+        const isFirstPlacement = !placedModelRef.current;
+        
         // Remove previous model
         if (placedModelRef.current) {
           rendererRef.current.scene.remove(placedModelRef.current);
@@ -373,11 +622,19 @@ export default function ARDebug2Page() {
         newModel.position.setFromMatrixPosition(reticle.matrix);
         rendererRef.current.scene.add(newModel);
         placedModelRef.current = newModel;
-        addLog('✅ Crocodile placed!');
+        const sceneName = scenes[currentSceneRef.current].name;
+        addLog(`✅ ${sceneName} placed at (${newModel.position.x.toFixed(2)}, ${newModel.position.y.toFixed(2)}, ${newModel.position.z.toFixed(2)})`);
         setModelPlaced(true);
         
         // Hide confirmation after 2 seconds
         setTimeout(() => setModelPlaced(false), 2000);
+        
+        // Start speech on first placement only
+        if (isFirstPlacement && !hasSpokenRef.current) {
+          hasSpokenRef.current = true;
+          addLog('🎤 Starting narration sequence...');
+          speakText(scenes[currentSceneRef.current].script, currentSceneRef.current);
+        }
       });
       rendererRef.current.scene.add(controller);
       addLog('✅ Tap-to-place controller ready');
@@ -410,6 +667,21 @@ export default function ARDebug2Page() {
         setModelPlaced(false);
         xrSessionRef.current = null;
         hitTestSourceRef.current = null;
+        
+        // Stop speech and timers
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+        if (autoPlayTimerRef.current) {
+          clearTimeout(autoPlayTimerRef.current);
+          autoPlayTimerRef.current = null;
+        }
+        setIsSpeaking(false);
+        hasSpokenRef.current = false;
+        
+        // Reset scene
+        setCurrentScene(0);
+        currentSceneRef.current = 0;
         
         if (placedModelRef.current) {
           rendererRef.current.scene.remove(placedModelRef.current);
@@ -495,6 +767,19 @@ export default function ARDebug2Page() {
             transition: 'all 0.3s ease',
             pointerEvents: 'none'
           }}>
+            {/* Scene indicator */}
+            <div style={{ 
+              fontSize: '0.9rem', 
+              marginBottom: '0.75rem',
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              padding: '0.5rem 1rem',
+              borderRadius: '12px',
+              display: 'inline-block'
+            }}>
+              Scene {currentScene + 1}/{scenes.length} - {scenes[currentScene].name}
+              {isSpeaking && ' 🔊'}
+            </div>
+            
             {surfaceFound ? (
               <>
                 <div style={{ fontSize: '4rem', marginBottom: '0.75rem', lineHeight: 1 }}>✅</div>
@@ -545,8 +830,11 @@ export default function ARDebug2Page() {
               textAlign: 'center',
               pointerEvents: 'none'
             }}>
-              <div style={{ fontSize: '4rem', marginBottom: '0.5rem', lineHeight: 1 }}>🦎</div>
+              <div style={{ fontSize: '4rem', marginBottom: '0.5rem', lineHeight: 1 }}>
+                {currentScene === 0 ? '🐊' : '🍌'}
+              </div>
               <div>PLACED!</div>
+              <div style={{ fontSize: '1rem', marginTop: '0.5rem' }}>{scenes[currentScene].name}</div>
             </div>
           )}
 
