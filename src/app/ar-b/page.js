@@ -51,9 +51,30 @@ export default function ARBPage() {
     utterance.rate = 0.9;
     utterance.pitch = 1;
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      console.log('🔊 Speech started');
+    };
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      console.log('🔇 Speech ended');
+
+      // If auto-play is active, schedule next scene after 5 seconds
+      if (autoPlay && currentScene < scenes.length - 1) {
+        console.log('⏱️ Scheduling next scene in 5 seconds...');
+        scheduleAutoPlay();
+      } else if (currentScene === scenes.length - 1) {
+        // Last scene, stop auto-play
+        console.log('Last scene reached, stopping auto-play');
+        setAutoPlay(false);
+      }
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      console.error('❌ Speech error');
+    };
 
     speechSynthesisRef.current = utterance;
     window.speechSynthesis.speak(utterance);
@@ -174,10 +195,10 @@ export default function ARBPage() {
     };
   }, []);
 
-  // Load model for current scene
-  const loadCurrentModel = async () => {
+  // Load model for specific scene index
+  const loadModelForScene = async (sceneIndex) => {
     try {
-      const scene = scenes[currentScene];
+      const scene = scenes[sceneIndex];
       console.log(`Loading ${scene.name} model...`);
 
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
@@ -211,28 +232,26 @@ export default function ARBPage() {
     if (currentScene < scenes.length - 1) {
       const newScene = currentScene + 1;
       setCurrentScene(newScene);
-      console.log(`Switching to scene ${newScene + 1}: ${scenes[newScene].name}`);
-
-      // Speak new scene script
-      speakText(scenes[newScene].script);
+      console.log(`➡️ Switching to scene ${newScene + 1}: ${scenes[newScene].name}`);
 
       // Load new model if in AR
       if (sessionActive && rendererRef.current) {
         try {
-          const model = await loadCurrentModel();
+          console.log(`📦 Loading model for ${scenes[newScene].name}...`);
+          const model = await loadModelForScene(newScene);
           rendererRef.current.loadedModel = model;
+          console.log(`✅ Model loaded and ready to place`);
         } catch (e) {
-          console.error(`Failed to load ${scenes[newScene].name}`);
+          console.error(`❌ Failed to load ${scenes[newScene].name}:`, e);
         }
       }
 
-      // Schedule next auto-play if enabled
-      if (autoPlay && newScene < scenes.length - 1) {
-        scheduleAutoPlay();
-      } else if (newScene === scenes.length - 1) {
-        // Last scene, stop auto-play
-        setAutoPlay(false);
-      }
+      // Speak new scene script (this will trigger scheduleAutoPlay via onend callback)
+      speakText(scenes[newScene].script);
+    } else {
+      // Last scene reached
+      console.log('Last scene reached, stopping auto-play');
+      setAutoPlay(false);
     }
   };
 
@@ -243,10 +262,11 @@ export default function ARBPage() {
       clearTimeout(autoPlayTimerRef.current);
     }
 
-    // Set new timer for 8 seconds
+    // Set new timer for 5 seconds
     autoPlayTimerRef.current = setTimeout(() => {
+      console.log('⏰ Timer triggered, switching to next scene...');
       nextScene();
-    }, 8000);
+    }, 5000);
   };
 
   // Handle auto-play toggle
@@ -278,20 +298,22 @@ export default function ARBPage() {
 
       const newScene = currentScene - 1;
       setCurrentScene(newScene);
-      console.log(`Switching to scene ${newScene + 1}: ${scenes[newScene].name}`);
-
-      // Speak new scene script
-      speakText(scenes[newScene].script);
+      console.log(`⬅️ Switching to scene ${newScene + 1}: ${scenes[newScene].name}`);
 
       // Load new model if in AR
       if (sessionActive && rendererRef.current) {
         try {
-          const model = await loadCurrentModel();
+          console.log(`📦 Loading model for ${scenes[newScene].name}...`);
+          const model = await loadModelForScene(newScene);
           rendererRef.current.loadedModel = model;
+          console.log(`✅ Model loaded and ready to place`);
         } catch (e) {
-          console.error(`Failed to load ${scenes[newScene].name}`);
+          console.error(`❌ Failed to load ${scenes[newScene].name}:`, e);
         }
       }
+
+      // Speak new scene script
+      speakText(scenes[newScene].script);
     }
   };
 
@@ -338,14 +360,15 @@ export default function ARBPage() {
 
       // Load initial model and speak script
       try {
-        const model = await loadCurrentModel();
+        console.log(`📦 Loading initial model: ${scenes[currentScene].name}...`);
+        const model = await loadModelForScene(currentScene);
         rendererRef.current.loadedModel = model;
         console.log(`✅ ${scenes[currentScene].name} ready! Tap screen to place it`);
 
         // Speak the initial scene script
         speakText(scenes[currentScene].script);
       } catch (e) {
-        console.error('Failed to load initial model:', e);
+        console.error('❌ Failed to load initial model:', e);
       }
 
       // Set up tap-to-place controller
@@ -723,7 +746,7 @@ export default function ARBPage() {
               </p>
               {autoPlay && (
                 <p style={{ margin: 0, color: '#FFC857', fontWeight: 'bold' }}>
-                  ⏱️ Auto-switching in 8 seconds...
+                  {isSpeaking ? '🔊 Listening to story...' : '⏱️ Next scene in 5 seconds...'}
                 </p>
               )}
             </div>
