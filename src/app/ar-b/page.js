@@ -19,6 +19,7 @@ export default function ARBPage() {
   const controllerRef = useRef(null);
   const speechSynthesisRef = useRef(null);
   const autoPlayTimerRef = useRef(null);
+  const autoPlayRef = useRef(false); // Ref to track autoPlay state for callbacks
 
   // Scenes with models and scripts
   const scenes = [
@@ -36,12 +37,14 @@ export default function ARBPage() {
     }
   ];
 
-  // Text-to-speech function
-  const speakText = (text) => {
+  // Text-to-speech function with ref to get latest state
+  const speakText = (text, sceneIndex) => {
     if (typeof window === 'undefined' || !window.speechSynthesis) {
       console.warn('Speech synthesis not supported');
       return;
     }
+
+    console.log(`🔊 Starting speech for scene ${sceneIndex + 1}: "${text.substring(0, 30)}..."`);
 
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
@@ -53,27 +56,44 @@ export default function ARBPage() {
 
     utterance.onstart = () => {
       setIsSpeaking(true);
-      console.log('🔊 Speech started');
+      console.log(`✅ Speech started for scene ${sceneIndex + 1}`);
     };
 
     utterance.onend = () => {
       setIsSpeaking(false);
-      console.log('🔇 Speech ended');
+      console.log(`🔇 Speech ended for scene ${sceneIndex + 1}`);
+      console.log(`AutoPlay is currently: ${autoPlayRef.current ? 'ENABLED' : 'DISABLED'}`);
+      console.log(`Current scene index: ${sceneIndex}`);
+      console.log(`Total scenes: ${scenes.length}`);
 
-      // If auto-play is active, schedule next scene after 5 seconds
-      if (autoPlay && currentScene < scenes.length - 1) {
-        console.log('⏱️ Scheduling next scene in 5 seconds...');
-        scheduleAutoPlay();
-      } else if (currentScene === scenes.length - 1) {
+      // Check if auto-play is still enabled using ref
+      if (autoPlayRef.current && sceneIndex < scenes.length - 1) {
+        console.log('✅ Auto-play is enabled, scheduling next scene in 5 seconds...');
+
+        // Clear any existing timer
+        if (autoPlayTimerRef.current) {
+          clearTimeout(autoPlayTimerRef.current);
+        }
+
+        // Schedule next scene
+        autoPlayTimerRef.current = setTimeout(() => {
+          console.log('⏰ 5 seconds timer fired!');
+          console.log(`Attempting to move from scene ${sceneIndex + 1} to scene ${sceneIndex + 2}`);
+          nextScene();
+        }, 5000);
+      } else if (sceneIndex >= scenes.length - 1) {
         // Last scene, stop auto-play
-        console.log('Last scene reached, stopping auto-play');
+        console.log('📍 Last scene reached, stopping auto-play');
         setAutoPlay(false);
+        autoPlayRef.current = false;
+      } else {
+        console.log('⏹️ Auto-play is disabled, not scheduling next scene');
       }
     };
 
-    utterance.onerror = () => {
+    utterance.onerror = (event) => {
       setIsSpeaking(false);
-      console.error('❌ Speech error');
+      console.error('❌ Speech error:', event);
     };
 
     speechSynthesisRef.current = utterance;
@@ -265,42 +285,30 @@ export default function ARBPage() {
       }
 
       // Speak new scene script (this will trigger scheduleAutoPlay via onend callback)
-      speakText(scenes[newScene].script);
+      speakText(scenes[newScene].script, newScene);
     } else {
       // Last scene reached
-      console.log('Last scene reached, stopping auto-play');
+      console.log('📍 Last scene reached, stopping auto-play');
       setAutoPlay(false);
     }
-  };
-
-  // Schedule auto-play timer
-  const scheduleAutoPlay = () => {
-    // Clear existing timer
-    if (autoPlayTimerRef.current) {
-      clearTimeout(autoPlayTimerRef.current);
-    }
-
-    // Set new timer for 5 seconds
-    autoPlayTimerRef.current = setTimeout(() => {
-      console.log('⏰ Timer triggered, switching to next scene...');
-      nextScene();
-    }, 5000);
   };
 
   // Handle auto-play toggle
   const toggleAutoPlay = () => {
     const newAutoPlay = !autoPlay;
+    console.log(`🎮 Auto-play toggled: ${newAutoPlay ? 'ON' : 'OFF'}`);
     setAutoPlay(newAutoPlay);
+    autoPlayRef.current = newAutoPlay; // Sync ref
 
-    if (newAutoPlay && currentScene < scenes.length - 1) {
-      // Start auto-play
-      scheduleAutoPlay();
-    } else {
-      // Stop auto-play
+    if (!newAutoPlay) {
+      // Stop auto-play - clear any pending timer
       if (autoPlayTimerRef.current) {
+        console.log('⏹️ Clearing auto-play timer');
         clearTimeout(autoPlayTimerRef.current);
         autoPlayTimerRef.current = null;
       }
+    } else {
+      console.log('▶️ Auto-play enabled. Will auto-switch after speech ends.');
     }
   };
 
@@ -313,6 +321,7 @@ export default function ARBPage() {
         autoPlayTimerRef.current = null;
       }
       setAutoPlay(false);
+      autoPlayRef.current = false; // Sync ref
 
       const newScene = currentScene - 1;
       setCurrentScene(newScene);
@@ -349,7 +358,7 @@ export default function ARBPage() {
       }
 
       // Speak new scene script
-      speakText(scenes[newScene].script);
+      speakText(scenes[newScene].script, newScene);
     }
   };
 
@@ -402,7 +411,7 @@ export default function ARBPage() {
         console.log(`✅ ${scenes[currentScene].name} ready! Tap screen to place it`);
 
         // Speak the initial scene script
-        speakText(scenes[currentScene].script);
+        speakText(scenes[currentScene].script, currentScene);
       } catch (e) {
         console.error('❌ Failed to load initial model:', e);
       }
@@ -454,6 +463,7 @@ export default function ARBPage() {
 
         // Stop auto-play
         setAutoPlay(false);
+        autoPlayRef.current = false; // Sync ref
         if (autoPlayTimerRef.current) {
           clearTimeout(autoPlayTimerRef.current);
           autoPlayTimerRef.current = null;
