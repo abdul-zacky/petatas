@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, Heart, Edit2 } from 'lucide-react';
+import { arExperiences, bukuCeritaData } from '@/data/sharedData';
 
 export default function MyPusakaPage() {
   const [activeTab, setActiveTab] = useState('ar');
@@ -17,93 +18,11 @@ export default function MyPusakaPage() {
     profileImage: 'https://i.pravatar.cc/150?img=12',
   };
 
-  // User's AR Experiences
-  const myARExperiences = [
-    {
-      id: 1,
-      title: 'Wayang Kulit Arjuna',
-      description: 'Wayang kulit karakter Arjuna dari cerita Mahabharata',
-      thumbnail: 'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=400&h=400&fit=crop',
-      creator: 'Raden Wijaya',
-      creatorAvatar: 'https://i.pravatar.cc/150?img=12',
-      likes: 234,
-      isLiked: true,
-    },
-    {
-      id: 2,
-      title: 'Candi Borobudur',
-      description: 'Model 3D Candi Borobudur yang megah',
-      thumbnail: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400&h=400&fit=crop',
-      creator: 'Raden Wijaya',
-      creatorAvatar: 'https://i.pravatar.cc/150?img=12',
-      likes: 456,
-      isLiked: false,
-    },
-    {
-      id: 3,
-      title: 'Keris Pusaka',
-      description: 'Keris pusaka dengan ukiran detail',
-      thumbnail: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&h=400&fit=crop',
-      creator: 'Raden Wijaya',
-      creatorAvatar: 'https://i.pravatar.cc/150?img=12',
-      likes: 189,
-      isLiked: true,
-    },
-    {
-      id: 4,
-      title: 'Batik Kawung',
-      description: 'Motif batik Kawung klasik dari Yogyakarta',
-      thumbnail: 'https://images.unsplash.com/photo-1617533555203-eccd85c81e43?w=400&h=400&fit=crop',
-      creator: 'Raden Wijaya',
-      creatorAvatar: 'https://i.pravatar.cc/150?img=12',
-      likes: 312,
-      isLiked: false,
-    },
-  ];
+  // User's AR Experiences - using shared data
+  const myARExperiences = arExperiences;
 
-  // User's Storybooks
-  const myStorybooks = [
-    {
-      id: 1,
-      title: 'Sangkuriang',
-      description: 'Legenda pembentukan Gunung Tangkuban Perahu',
-      thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop',
-      creator: 'Raden Wijaya',
-      creatorAvatar: 'https://i.pravatar.cc/150?img=12',
-      likes: 567,
-      isLiked: true,
-    },
-    {
-      id: 2,
-      title: 'Roro Jonggrang',
-      description: 'Kisah cinta dan kutukan Candi Prambanan',
-      thumbnail: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&h=400&fit=crop',
-      creator: 'Raden Wijaya',
-      creatorAvatar: 'https://i.pravatar.cc/150?img=12',
-      likes: 423,
-      isLiked: false,
-    },
-    {
-      id: 3,
-      title: 'Bawang Merah Bawang Putih',
-      description: 'Cerita rakyat tentang dua saudara tiri',
-      thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=400&fit=crop',
-      creator: 'Raden Wijaya',
-      creatorAvatar: 'https://i.pravatar.cc/150?img=12',
-      likes: 389,
-      isLiked: true,
-    },
-    {
-      id: 4,
-      title: 'Timun Mas',
-      description: 'Petualangan Timun Mas melawan raksasa',
-      thumbnail: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=400&h=400&fit=crop',
-      creator: 'Raden Wijaya',
-      creatorAvatar: 'https://i.pravatar.cc/150?img=12',
-      likes: 445,
-      isLiked: false,
-    },
-  ];
+  // User's Storybooks - using shared data
+  const myStorybooks = bukuCeritaData;
 
   // Filter based on search and active tab
   const filteredARExperiences = myARExperiences.filter(item =>
@@ -153,8 +72,8 @@ export default function MyPusakaPage() {
         <div className="p-3 relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <Image
-              src={item.creatorAvatar}
-              alt={item.creator}
+              src={item.user.avatar}
+              alt={item.user.username}
               width={24}
               height={24}
               className="rounded-full"
@@ -163,13 +82,13 @@ export default function MyPusakaPage() {
                 boxShadow: '0 0 8px rgba(138, 127, 216, 0.2)'
               }}
             />
-            <span className="text-xs" style={{ color: '#6B5FBD' }}>{item.creator}</span>
+            <span className="text-xs" style={{ color: '#6B5FBD' }}>@{item.user.username}</span>
           </div>
           <h3 className="font-bold mb-1 line-clamp-1" style={{
             color: '#1B1B1E',
             textShadow: '0 0 10px rgba(138, 127, 216, 0.15)'
           }}>{item.title}</h3>
-          <p className="text-sm mb-2 line-clamp-2" style={{ color: '#8B7355' }}>{item.description}</p>
+          <p className="text-sm mb-2 line-clamp-2" style={{ color: '#8B7355' }}>{item.shortDescription}</p>
           <div className="flex items-center justify-between">
             <button
               onClick={(e) => {
@@ -228,8 +147,8 @@ export default function MyPusakaPage() {
         <div className="p-3 relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <Image
-              src={item.creatorAvatar}
-              alt={item.creator}
+              src={item.user.avatar}
+              alt={item.user.username}
               width={24}
               height={24}
               className="rounded-full"
@@ -238,13 +157,13 @@ export default function MyPusakaPage() {
                 boxShadow: '0 0 8px rgba(212, 163, 115, 0.2)'
               }}
             />
-            <span className="text-xs" style={{ color: '#D4A373' }}>{item.creator}</span>
+            <span className="text-xs" style={{ color: '#D4A373' }}>@{item.user.username}</span>
           </div>
           <h3 className="font-bold mb-1 line-clamp-1" style={{
             color: '#1B1B1E',
             textShadow: '0 0 10px rgba(212, 163, 115, 0.15)'
           }}>{item.title}</h3>
-          <p className="text-sm mb-2 line-clamp-2" style={{ color: '#8B7355' }}>{item.description}</p>
+          <p className="text-sm mb-2 line-clamp-2" style={{ color: '#8B7355' }}>{item.shortDescription}</p>
           <div className="flex items-center justify-between">
             <button
               onClick={(e) => {
