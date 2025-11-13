@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 export default function ARDebugPage() {
   const [arSupported, setArSupported] = useState(false);
   const [planeDetectionSupported, setPlaneDetectionSupported] = useState(false);
+  const [hitTestSupported, setHitTestSupported] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Initializing...');
   const [logs, setLogs] = useState([]);
@@ -40,17 +41,13 @@ export default function ARDebugPage() {
         addLog(`Basic immersive-ar support: ${basicSupported}`);
         setArSupported(basicSupported);
 
-        // Check plane-detection support
+        // Note: isSessionSupported doesn't check individual features
+        // We'll test features when starting the session
         if (basicSupported) {
-          try {
-            const planeSupported = await navigator.xr.isSessionSupported('immersive-ar');
-            addLog(`Plane-detection support check: ${planeSupported}`);
-            setPlaneDetectionSupported(planeSupported);
-            setStatusMessage(planeSupported ? 'WebXR with plane-detection supported!' : 'WebXR supported but plane-detection unknown');
-          } catch (e) {
-            addLog(`Error checking plane-detection: ${e.message}`);
-            setPlaneDetectionSupported(false);
-          }
+          addLog('Device supports immersive-ar mode');
+          addLog('Will test hit-test and plane-detection features on session start');
+          setHitTestSupported(true); // Assume supported, will verify on session start
+          setStatusMessage('WebXR AR supported! Ready to test features');
         }
 
       } catch (e) {
@@ -128,20 +125,21 @@ export default function ARDebugPage() {
     }
 
     try {
-      addLog('🚀 Attempting to start AR session with plane-detection...');
+      addLog('🚀 Attempting to start AR session with hit-test (required) and plane-detection (optional)...');
       setStatusMessage('Starting AR session...');
 
-      // Request session with plane-detection as required feature
+      // Request session with hit-test as required feature
+      // plane-detection is optional (not all devices support it)
       const sessionOptions = {
-        requiredFeatures: ['plane-detection'],
-        optionalFeatures: ['dom-overlay', 'hit-test'],
+        requiredFeatures: ['hit-test'],
+        optionalFeatures: ['dom-overlay', 'plane-detection'],
       };
 
       addLog(`Session options: ${JSON.stringify(sessionOptions)}`);
 
       const session = await navigator.xr.requestSession('immersive-ar', sessionOptions);
       
-      addLog('✅ AR session created successfully with plane-detection!');
+      addLog('✅ AR session created successfully!');
       xrSessionRef.current = session;
 
       await rendererRef.current.renderer.xr.setSession(session);
@@ -152,7 +150,21 @@ export default function ARDebugPage() {
 
       // Log session details
       addLog(`Session mode: ${session.mode}`);
-      addLog(`Session supported features: ${session.enabledFeatures ? Array.from(session.enabledFeatures).join(', ') : 'N/A'}`);
+      if (session.enabledFeatures) {
+        const features = Array.from(session.enabledFeatures);
+        addLog(`Session enabled features: ${features.join(', ')}`);
+        
+        const hasHitTest = features.includes('hit-test');
+        const hasPlaneDetection = features.includes('plane-detection');
+        
+        addLog(`✅ hit-test: ${hasHitTest ? 'ENABLED' : 'NOT ENABLED'}`);
+        addLog(`${hasPlaneDetection ? '✅' : '❌'} plane-detection: ${hasPlaneDetection ? 'ENABLED' : 'NOT ENABLED (optional)'}`);
+        
+        setHitTestSupported(hasHitTest);
+        setPlaneDetectionSupported(hasPlaneDetection);
+      } else {
+        addLog('Could not retrieve enabled features');
+      }
 
       // Handle session end
       session.addEventListener('end', () => {
@@ -168,8 +180,8 @@ export default function ARDebugPage() {
       let errorMsg = `Error: ${error.name}\n${error.message}`;
 
       if (error.name === 'NotSupportedError') {
-        errorMsg = '❌ WebXR with plane-detection not supported.\n\nPossible reasons:\n1. Device does not support ARCore\n2. Browser needs update\n3. Plane-detection feature not available';
-        addLog('Plane-detection is likely not supported on this device/browser');
+        errorMsg = '❌ WebXR with hit-test not supported.\n\nPossible reasons:\n1. Device does not support ARCore\n2. Browser needs update\n3. WebXR features not available';
+        addLog('hit-test feature is likely not supported on this device/browser');
       } else if (error.name === 'NotAllowedError') {
         errorMsg = '❌ Permission denied.\n\nPlease allow camera permission and try again.';
         addLog('User denied camera permission');
@@ -242,17 +254,23 @@ export default function ARDebugPage() {
               </div>
 
               {/* Status Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                 <div className="rounded-xl shadow-md p-6 text-center" style={{backgroundColor: 'white', border: '2px solid #D4A373'}}>
                   <div className="text-4xl mb-2">{arSupported ? '✅' : '❌'}</div>
-                  <div className="font-bold" style={{color: '#473C8B'}}>Basic AR Support</div>
+                  <div className="font-bold" style={{color: '#473C8B'}}>Basic AR</div>
                   <div className="text-sm text-gray-600">{arSupported ? 'Supported' : 'Not Supported'}</div>
+                </div>
+
+                <div className="rounded-xl shadow-md p-6 text-center" style={{backgroundColor: 'white', border: '2px solid #D4A373'}}>
+                  <div className="text-4xl mb-2">{hitTestSupported ? '✅' : '❓'}</div>
+                  <div className="font-bold" style={{color: '#473C8B'}}>Hit Test</div>
+                  <div className="text-sm text-gray-600">{hitTestSupported ? 'Enabled' : 'Unknown'}</div>
                 </div>
 
                 <div className="rounded-xl shadow-md p-6 text-center" style={{backgroundColor: 'white', border: '2px solid #D4A373'}}>
                   <div className="text-4xl mb-2">{planeDetectionSupported ? '✅' : '❓'}</div>
                   <div className="font-bold" style={{color: '#473C8B'}}>Plane Detection</div>
-                  <div className="text-sm text-gray-600">{planeDetectionSupported ? 'Available' : 'Unknown'}</div>
+                  <div className="text-sm text-gray-600">{planeDetectionSupported ? 'Enabled' : 'Optional'}</div>
                 </div>
 
                 <div className="rounded-xl shadow-md p-6 text-center" style={{backgroundColor: 'white', border: '2px solid #D4A373'}}>
@@ -275,7 +293,7 @@ export default function ARDebugPage() {
                   🔍 Start AR Debug Session
                 </button>
                 <p className="mt-4 text-sm" style={{color: '#473C8B'}}>
-                  This will test WebXR with <strong>plane-detection</strong> as a required feature
+                  This will test WebXR with <strong>hit-test</strong> (required) and <strong>plane-detection</strong> (optional)
                 </p>
               </div>
 
@@ -292,10 +310,10 @@ export default function ARDebugPage() {
                     <strong>navigator.xr:</strong> {typeof navigator !== 'undefined' && navigator.xr ? 'Available' : 'Not Available'}
                   </div>
                   <div className="text-sm" style={{color: '#473C8B'}}>
-                    <strong>Required Features:</strong> ['plane-detection']
+                    <strong>Required Features:</strong> ['hit-test']
                   </div>
                   <div className="text-sm" style={{color: '#473C8B'}}>
-                    <strong>Optional Features:</strong> ['dom-overlay', 'hit-test']
+                    <strong>Optional Features:</strong> ['dom-overlay', 'plane-detection']
                   </div>
                 </div>
 
@@ -345,7 +363,7 @@ export default function ARDebugPage() {
             maxWidth: '90%',
             alignSelf: 'center'
           }}>
-            ✅ AR Session Active with Plane Detection!
+            ✅ AR Session Active! Check console for enabled features
           </div>
 
           <div style={{
