@@ -107,10 +107,13 @@ export default function ARBPage() {
 
   // Check WebXR support
   useEffect(() => {
+    addLog('🔍 Checking WebXR support...');
+
     const checkSupport = async () => {
       setStatusMessage('Checking WebXR support...');
 
       if (!navigator.xr) {
+        addLog('❌ WebXR not available');
         setStatusMessage('WebXR not available');
         setArSupported(false);
         return;
@@ -120,8 +123,9 @@ export default function ARBPage() {
         const supported = await navigator.xr.isSessionSupported('immersive-ar');
         setArSupported(supported);
         setStatusMessage(supported ? 'WebXR AR supported!' : 'WebXR AR not supported');
+        addLog(supported ? '✅ WebXR AR supported!' : '❌ WebXR AR not supported');
       } catch (e) {
-        console.error('Error checking support:', e);
+        addLog('❌ Error checking support: ' + e.message);
         setArSupported(false);
         setStatusMessage('Error checking WebXR support');
       }
