@@ -81,6 +81,21 @@ export default function ARDebugPage() {
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.xr.enabled = true;
+        
+        // CRITICAL: Set reference space type to 'local' instead of default 'local-floor'
+        // Samsung Tab S9 doesn't support 'local-floor'
+        addLog('⚙️ Configuring Three.js XR reference space type...');
+        try {
+          // Three.js WebXRManager allows setting reference space type
+          if (renderer.xr.setReferenceSpaceType) {
+            renderer.xr.setReferenceSpaceType('local');
+            addLog('✅ Three.js reference space set to: local');
+          } else {
+            addLog('⚠️ Three.js version may not support setReferenceSpaceType');
+          }
+        } catch (e) {
+          addLog(`⚠️ Could not set reference space type: ${e.message}`);
+        }
 
         // Add basic lighting
         const light = new THREE.HemisphereLight(0xffffff, 0xbbbbbb, 1);
@@ -142,7 +157,7 @@ export default function ARDebugPage() {
       addLog('✅ AR session created successfully!');
       xrSessionRef.current = session;
 
-      // Log session details BEFORE setting up reference space
+      // Log session details BEFORE anything else
       addLog(`Session mode: ${session.mode}`);
       if (session.enabledFeatures) {
         const features = Array.from(session.enabledFeatures);
@@ -179,25 +194,48 @@ export default function ARDebugPage() {
         throw new Error('No reference space types are supported on this device');
       }
 
-      addLog(`📍 Using reference space: ${supportedSpaces[0]}`);
-      const referenceSpace = await session.requestReferenceSpace(supportedSpaces[0]);
+      addLog(`📍 Supported spaces: ${supportedSpaces.join(', ')}`);
+
+      // THREE.JS RENDERER SET SESSION
+      // This might fail if Three.js tries to use a reference space that's not supported
+      try {
+        addLog('🎨 Setting session on Three.js renderer...');
+        addLog('⚠️ Three.js may request its own reference space internally');
+        
+        await rendererRef.current.renderer.xr.setSession(session);
+        
+        addLog('✅ Three.js renderer session set successfully!');
+      } catch (rendererError) {
+        addLog(`❌ Three.js setSession failed: ${rendererError.name} - ${rendererError.message}`);
+        addLog('💡 This might be because Three.js needs "local-floor" reference space');
+        throw rendererError;
+      }
+
+      // Get the reference space that Three.js is using
+      try {
+        const threeRefSpace = rendererRef.current.renderer.xr.getReferenceSpace();
+        addLog(`📍 Three.js is using reference space: ${threeRefSpace ? 'Retrieved' : 'Unknown'}`);
+      } catch (e) {
+        addLog(`⚠️ Could not get Three.js reference space: ${e.message}`);
+      }
 
       // Set up hit test source if hit-test is enabled
       if (session.enabledFeatures && Array.from(session.enabledFeatures).includes('hit-test')) {
         try {
-          addLog('🎯 Setting up hit-test source...');
-          const hitTestSource = await session.requestHitTestSource({ space: referenceSpace });
+          addLog('🎯 Setting up hit-test source with viewer space...');
+          const viewerSpace = await session.requestReferenceSpace('viewer');
+          const hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
+          hitTestSourceRef.current = hitTestSource;
           addLog('✅ Hit-test source created successfully');
         } catch (e) {
           addLog(`⚠️ Hit-test source creation failed: ${e.message}`);
         }
       }
-
-      await rendererRef.current.renderer.xr.setSession(session);
       
       setSessionActive(true);
       setStatusMessage('AR Session Active');
-      addLog('✅ Session set on renderer');
+      addLog('✅ AR Session fully initialized!');
+      addLog('🎉 You can now use AR features!');
 
       // Handle session end
       session.addEventListener('end', () => {
