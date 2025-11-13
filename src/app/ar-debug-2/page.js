@@ -17,6 +17,8 @@ export default function ARDebug2Page() {
   const reticleRef = useRef(null);
   const placedModelRef = useRef(null);
   const statusIndicatorRef = useRef(null);
+  const textSpriteRef = useRef(null);
+  const successTimerRef = useRef(null);
 
   const addLog = (message) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -55,6 +57,39 @@ export default function ARDebug2Page() {
       try {
         addLog('⚙️ Initializing Three.js...');
         const THREE = await import('three');
+
+        // Function to create text sprite
+        const createTextSprite = (message, color = '#FFFFFF', bgColor = null) => {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = 1024;
+          canvas.height = 256;
+          
+          // Background
+          if (bgColor) {
+            context.fillStyle = bgColor;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+          }
+          
+          // Text
+          context.font = 'Bold 100px Arial';
+          context.fillStyle = color;
+          context.textAlign = 'center';
+          context.textBaseline = 'middle';
+          context.fillText(message, canvas.width / 2, canvas.height / 2);
+          
+          const texture = new THREE.CanvasTexture(canvas);
+          const spriteMaterial = new THREE.SpriteMaterial({ 
+            map: texture,
+            transparent: true,
+            opacity: 1,
+            depthTest: false,
+            depthWrite: false
+          });
+          const sprite = new THREE.Sprite(spriteMaterial);
+          sprite.scale.set(1, 0.25, 1);
+          return sprite;
+        };
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
@@ -110,7 +145,14 @@ export default function ARDebug2Page() {
         statusIndicatorRef.current = statusIndicator;
         addLog('✅ 3D status indicator created');
 
-        rendererRef.current = { THREE, renderer, scene, camera, reticleMaterial, statusMaterial };
+        // Create text sprite for scanning
+        const scanningText = createTextSprite('SCANNING...', '#FFFFFF', 'rgba(255, 140, 0, 0.8)');
+        scanningText.visible = false;
+        scene.add(scanningText);
+        textSpriteRef.current = { scanning: scanningText, createTextSprite };
+        addLog('✅ Text sprites created');
+
+        rendererRef.current = { THREE, renderer, scene, camera, reticleMaterial, statusMaterial, createTextSprite };
         addLog('✅ Three.js initialized successfully');
 
         let pulseTime = 0;
@@ -121,9 +163,10 @@ export default function ARDebug2Page() {
             const referenceSpace = renderer.xr.getReferenceSpace();
             const reticle = reticleRef.current;
             const statusIndicator = statusIndicatorRef.current;
+            const textSprites = textSpriteRef.current;
             const camera = renderer.xr.getCamera();
 
-            // Position status indicator in front of camera
+            // Position status indicator and text in front of camera
             if (statusIndicator && camera) {
               const cameraDirection = new THREE.Vector3();
               camera.getWorldDirection(cameraDirection);
@@ -132,6 +175,13 @@ export default function ARDebug2Page() {
               indicatorPosition.y += 0.3; // Slightly above center
               statusIndicator.position.copy(indicatorPosition);
               statusIndicator.lookAt(camera.position);
+              
+              // Position text sprite
+              if (textSprites?.scanning) {
+                const textPosition = indicatorPosition.clone();
+                textPosition.y += 0.15; // Above the colored plane
+                textSprites.scanning.position.copy(textPosition);
+              }
             }
 
             // Perform hit test to find surfaces
@@ -150,15 +200,40 @@ export default function ARDebug2Page() {
                 
                 // Update status indicator - GREEN
                 if (statusIndicator) {
-                  statusIndicator.visible = true;
-                  statusIndicator.material.color.setHex(0x00FF00); // Green
+                  statusIndicator.visible = false; // Hide when surface found
                 }
                 
-                // Update UI state and log change
-                if (!lastSurfaceState) {
+                // Hide scanning text
+                if (textSprites?.scanning) {
+                  textSprites.scanning.visible = false;
+                }
+                
+                // Show success message temporarily (first time only)
+                if (!lastSurfaceState && textSprites) {
                   addLog('✅ Surface detected!');
+                  
+                  // Create and show success text
+                  if (textSprites.success) {
+                    rendererRef.current.scene.remove(textSprites.success);
+                  }
+                  
+                  const successText = rendererRef.current.createTextSprite('SURFACE FOUND!', '#FFFFFF', 'rgba(34, 139, 34, 0.9)');
+                  successText.position.copy(textSprites.scanning.position);
+                  successText.visible = true;
+                  rendererRef.current.scene.add(successText);
+                  textSprites.success = successText;
+                  
+                  // Auto-hide after 3 seconds
+                  if (successTimerRef.current) clearTimeout(successTimerRef.current);
+                  successTimerRef.current = setTimeout(() => {
+                    if (textSprites.success) {
+                      textSprites.success.visible = false;
+                    }
+                  }, 3000);
+                  
                   lastSurfaceState = true;
                 }
+                
                 setSurfaceFound(true);
               } else {
                 reticle.visible = false;
@@ -170,6 +245,16 @@ export default function ARDebug2Page() {
                   // Pulse animation
                   const opacity = 0.7 + Math.sin(timestamp * 0.003) * 0.3;
                   statusIndicator.material.opacity = opacity;
+                }
+                
+                // Show scanning text
+                if (textSprites?.scanning) {
+                  textSprites.scanning.visible = true;
+                }
+                
+                // Hide success text when surface lost
+                if (textSprites?.success) {
+                  textSprites.success.visible = false;
                 }
                 
                 if (lastSurfaceState) {
@@ -303,6 +388,12 @@ export default function ARDebug2Page() {
         addLog('✅ 3D status indicator activated');
       }
       
+      // Show scanning text
+      if (textSpriteRef.current?.scanning) {
+        textSpriteRef.current.scanning.visible = true;
+        addLog('✅ Scanning text displayed');
+      }
+      
       setSessionActive(true);
       setIsScanning(true);
       setSurfaceFound(false);
@@ -331,6 +422,19 @@ export default function ARDebug2Page() {
         
         if (statusIndicatorRef.current) {
           statusIndicatorRef.current.visible = false;
+        }
+        
+        if (textSpriteRef.current?.scanning) {
+          textSpriteRef.current.scanning.visible = false;
+        }
+        
+        if (textSpriteRef.current?.success) {
+          textSpriteRef.current.success.visible = false;
+        }
+        
+        if (successTimerRef.current) {
+          clearTimeout(successTimerRef.current);
+          successTimerRef.current = null;
         }
       });
 
