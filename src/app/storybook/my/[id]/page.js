@@ -62,14 +62,14 @@ export default function MyStorybookPage() {
       
       {/* Animated Background Grid */}
       <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: 'linear-gradient(#473C8B 1px, transparent 1px), linear-gradient(90deg, #473C8B 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(#6379B9 1px, transparent 1px), linear-gradient(90deg, #6379B9 1px, transparent 1px)',
         backgroundSize: '50px 50px',
         animation: 'gridMove 20s linear infinite'
       }} />
       
       {/* Floating Orbs */}
       <div className="absolute top-20 left-10 w-40 h-40 rounded-full blur-3xl opacity-20" style={{
-        background: 'radial-gradient(circle, #473C8B 0%, transparent 70%)',
+        background: 'radial-gradient(circle, #6379B9 0%, transparent 70%)',
         animation: 'float 6s ease-in-out infinite'
       }} />
       <div className="absolute top-1/3 right-10 w-60 h-60 rounded-full blur-3xl opacity-20" style={{
@@ -100,14 +100,14 @@ export default function MyStorybookPage() {
           }}
         >
           <ArrowLeft className="w-6 h-6 relative z-10" style={{
-            color: '#473C8B',
-            filter: 'drop-shadow(0 0 4px rgba(138, 127, 216, 0.4))'
+            color: '#6379B9',
+            filter: 'drop-shadow(0 0 4px rgba(99, 121, 185, 0.4))'
           }} />
         </button>
         <div className="flex items-center gap-2">
           <BookOpen className="w-5 h-5" style={{
-            color: '#473C8B',
-            filter: 'drop-shadow(0 0 5px rgba(138, 127, 216, 0.4))'
+            color: '#6379B9',
+            filter: 'drop-shadow(0 0 5px rgba(99, 121, 185, 0.4))'
           }} />
           <span className="font-semibold" style={{
             color: '#1B1B1E',
@@ -137,14 +137,14 @@ export default function MyStorybookPage() {
                 }} />
               </div>
               <BookOpen className="w-12 h-12 relative z-10" style={{
-                color: '#473C8B',
-                filter: 'drop-shadow(0 0 10px rgba(138, 127, 216, 0.5))'
+                color: '#6379B9',
+                filter: 'drop-shadow(0 0 10px rgba(99, 121, 185, 0.5))'
               }} />
             </div>
           </div>
           <h1 className="text-4xl font-bold mb-3" style={{
-            textShadow: '0 0 20px rgba(138, 127, 216, 0.3), 0 0 40px rgba(138, 127, 216, 0.2)',
-            background: 'linear-gradient(135deg, #473C8B 0%, #8A7FD8 50%, #D4A373 100%)',
+            textShadow: '0 0 20px rgba(99, 121, 185, 0.3), 0 0 40px rgba(99, 121, 185, 0.2)',
+            background: 'linear-gradient(135deg, #6379B9 0%, #9DB4E8 50%, #D4A373 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text'
@@ -152,8 +152,8 @@ export default function MyStorybookPage() {
             {storybook.title}
           </h1>
           <p className="text-lg mb-2 font-medium" style={{
-            color: '#6B5FBD',
-            textShadow: '0 0 8px rgba(138, 127, 216, 0.25)'
+            color: '#7A8FD1',
+            textShadow: '0 0 8px rgba(99, 121, 185, 0.25)'
           }}>
             {storybook.subtitle}
           </p>

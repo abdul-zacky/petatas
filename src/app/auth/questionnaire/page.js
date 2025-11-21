@@ -71,16 +71,31 @@ export default function QuestionnairePage() {
   // Branch A: Questions for Pengguna
   const penggunaQuestions = [
     {
-      id: 'subRole',
-      question: 'Apa profesi/status Anda saat ini?',
+      id: 'profesi',
+      question: 'Apa profesi Anda?',
       icon: GraduationCap,
       description: 'Ini membantu kami memberikan konten yang relevan untuk Anda',
       options: [
-        { value: 'mahasiswa', label: 'Mahasiswa/Pelajar', description: 'Sedang menempuh pendidikan', icon: GraduationCap },
+        { value: 'mahasiswa', label: 'Mahasiswa', description: 'Sedang menempuh pendidikan tinggi', icon: GraduationCap },
+        { value: 'pelajar', label: 'Pelajar', description: 'Siswa SMA/SMK sederajat', icon: GraduationCap },
         { value: 'guru', label: 'Guru/Dosen', description: 'Tenaga pendidik', icon: Users },
-        { value: 'pegawai', label: 'Pegawai Kantoran', description: 'Bekerja di perusahaan', icon: Briefcase },
+        { value: 'pegawai', label: 'Pegawai/Karyawan', description: 'Bekerja di perusahaan/instansi', icon: Briefcase },
+        { value: 'wirausaha', label: 'Wirausaha', description: 'Pemilik usaha kecil', icon: Store },
         { value: 'irt', label: 'Ibu Rumah Tangga', description: 'Mengurus rumah tangga', icon: Home },
-        { value: 'pemuda', label: 'Lainnya', description: 'Pekerjaan lain', icon: User }
+        { value: 'lainnya', label: 'Lainnya', description: 'Profesi lain', icon: User }
+      ]
+    },
+    {
+      id: 'subRole',
+      question: 'Apa status Anda saat ini?',
+      icon: User,
+      description: 'Membantu kami memahami aktivitas Anda',
+      options: [
+        { value: 'aktif_bekerja', label: 'Aktif Bekerja', description: 'Sedang bekerja full time' },
+        { value: 'aktif_belajar', label: 'Aktif Belajar', description: 'Fokus pada pendidikan' },
+        { value: 'keduanya', label: 'Keduanya', description: 'Bekerja sambil belajar' },
+        { value: 'mencari_kerja', label: 'Mencari Kerja', description: 'Sedang mencari pekerjaan' },
+        { value: 'freelance', label: 'Freelance', description: 'Bekerja lepas' }
       ]
     },
     {
