@@ -15,7 +15,10 @@ export default function ChatbotPage() {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const messagesEndRef = useRef(null);
+  const audioRef = useRef(null);
 
   const quickReplies = [
     { id: 1, text: 'Cara scan QR QRIS?', icon: '📱' },
@@ -99,6 +102,87 @@ export default function ChatbotPage() {
     handleSendMessage(text);
   };
 
+  const handleVoiceRecording = () => {
+    if (isRecording) {
+      // Stop recording manually
+      stopRecording();
+    } else {
+      // Start recording
+      setIsRecording(true);
+      
+      // Auto stop after 3 seconds
+      setTimeout(() => {
+        stopRecording();
+      }, 3000);
+    }
+  };
+
+  const stopRecording = () => {
+    if (!isRecording) return;
+    
+    setIsRecording(false);
+    
+    // Add user voice message
+    const userMessage = {
+      id: messages.length + 1,
+      sender: 'user',
+      text: '🎤 Pesan suara',
+      timestamp: new Date(),
+      isVoice: true,
+    };
+    setMessages([...messages, userMessage]);
+    setShowQuickReplies(false);
+    setIsTyping(true);
+
+    // Simulate bot processing and play audio response
+    setTimeout(() => {
+      const botMessage = {
+        id: messages.length + 2,
+        sender: 'bot',
+        text: '🔊 Memutar pesan suara...',
+        timestamp: new Date(),
+        isVoice: true,
+      };
+      setMessages((prev) => [...prev, botMessage]);
+      setIsTyping(false);
+      
+      // Play audio response
+      playAudioResponse();
+    }, 1500);
+  };
+
+  const playAudioResponse = () => {
+    setIsPlayingAudio(true);
+    
+    // Create audio element
+    const audio = new Audio('/response_chatbot.mp3');
+    audioRef.current = audio;
+    
+    audio.onended = () => {
+      setIsPlayingAudio(false);
+    };
+    
+    audio.onerror = () => {
+      console.error('Error loading audio file');
+      setIsPlayingAudio(false);
+    };
+    
+    audio.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(false);
+    });
+  };
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
   return (
     <div className="h-full flex flex-col bg-white w-full">
       {/* Header */}
@@ -139,6 +223,31 @@ export default function ChatbotPage() {
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {isRecording && (
+          <div className="flex justify-center mb-4">
+            <div className="bg-red-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 animate-pulse">
+              <div className="w-3 h-3 bg-white rounded-full"></div>
+              <span className="font-semibold">Merekam...</span>
+              <Mic size={20} />
+            </div>
+          </div>
+        )}
+
+        {isPlayingAudio && (
+          <div className="flex justify-center mb-4">
+            <div className="bg-[#6379B9] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3">
+              <div className="flex gap-1">
+                <div className="w-1 h-4 bg-white rounded-full animate-pulse"></div>
+                <div className="w-1 h-6 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-1 h-5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-1 h-7 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></div>
+                <div className="w-1 h-4 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+              </div>
+              <span className="font-semibold">Memutar audio...</span>
             </div>
           </div>
         )}
@@ -192,7 +301,14 @@ export default function ChatbotPage() {
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2">
             {/* Voice Button */}
-            <button className="w-10 h-10 bg-[#6379B9]/10 text-[#6379B9] rounded-full flex items-center justify-center hover:bg-[#6379B9]/20 transition-colors flex-shrink-0">
+            <button 
+              onClick={handleVoiceRecording}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
+                isRecording 
+                  ? 'bg-red-500 text-white animate-pulse' 
+                  : 'bg-[#6379B9]/10 text-[#6379B9] hover:bg-[#6379B9]/20'
+              }`}
+            >
               <Mic size={20} />
             </button>
 
