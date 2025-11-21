@@ -7,6 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
+<<<<<<< HEAD
     router.push('/dashboard');
   }, [router]);
 
@@ -24,4 +25,11 @@ export default function Home() {
       </div>
     </div>
   );
+=======
+    router.push('/auth/signup');
+  }, [router]);
+
+  return null;
+>>>>>>> 5ac0626f3f20fa3dacfe6807f47eae119a5dc472
 }
+
