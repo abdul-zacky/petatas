@@ -209,8 +209,8 @@ export default function MyStorybookPage() {
                 }}
               >
                 <Heart className={`w-5 h-5 ${isFavorited ? 'fill-current' : ''}`} style={{
-                  color: isFavorited ? '#ef4444' : '#473C8B',
-                  filter: isFavorited ? 'drop-shadow(0 0 6px rgba(239, 68, 68, 0.6))' : 'drop-shadow(0 0 4px rgba(138, 127, 216, 0.4))'
+                  color: isFavorited ? '#ef4444' : '#6379B9',
+                  filter: isFavorited ? 'drop-shadow(0 0 6px rgba(239, 68, 68, 0.6))' : 'drop-shadow(0 0 4px rgba(99, 121, 185, 0.4))'
                 }} />
                 {isFavorited && (
                   <div className="absolute inset-0 animate-ping opacity-20">
@@ -222,23 +222,23 @@ export default function MyStorybookPage() {
                 onClick={handleShare}
                 className="p-2 rounded-xl transition-all relative overflow-hidden"
                 style={{
-                  background: 'rgba(138, 127, 216, 0.1)',
-                  border: '2px solid rgba(138, 127, 216, 0.25)'
+                  background: 'rgba(99, 121, 185, 0.1)',
+                  border: '2px solid rgba(99, 121, 185, 0.25)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(138, 127, 216, 0.15)';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(138, 127, 216, 0.3)';
+                  e.currentTarget.style.background = 'rgba(99, 121, 185, 0.15)';
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(99, 121, 185, 0.3)';
                   e.currentTarget.style.transform = 'scale(1.1)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(138, 127, 216, 0.1)';
+                  e.currentTarget.style.background = 'rgba(99, 121, 185, 0.1)';
                   e.currentTarget.style.boxShadow = 'none';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
                 <Share2 className="w-5 h-5" style={{
-                  color: '#473C8B',
-                  filter: 'drop-shadow(0 0 4px rgba(138, 127, 216, 0.4))'
+                  color: '#6379B9',
+                  filter: 'drop-shadow(0 0 4px rgba(99, 121, 185, 0.4))'
                 }} />
               </button>
             </div>
