@@ -1,30 +1,30 @@
 'use client';
 
 import { useState } from 'react';
-import { Trophy, Medal, Crown, TrendingUp, Users } from 'lucide-react';
+import { Trophy, Medal, Crown, TrendingUp, Users, UserCircle2, Store, Gift, Flame } from 'lucide-react';
 
 export default function LeaderboardPage() {
   const [userType, setUserType] = useState('pengguna'); // 'pengguna' or 'bisnis'
   const [timePeriod, setTimePeriod] = useState('minggu'); // 'hari', 'minggu', 'bulan', 'alltime'
 
   const leaderboardPengguna = [
-    { rank: 1, name: 'Petrus Maury', points: 15420, avatar: '👨', transactions: 156, badge: 'gold' },
-    { rank: 2, name: 'Maria Kambu', points: 14230, avatar: '👩', transactions: 142, badge: 'silver' },
-    { rank: 3, name: 'Daniel Kogoya', points: 12850, avatar: '👨', transactions: 128, badge: 'bronze' },
-    { rank: 4, name: 'Elisabeth Rumadas', points: 11540, avatar: '👩', transactions: 115 },
-    { rank: 5, name: 'Andreas Kareth', points: 10820, avatar: '👨', transactions: 108 },
-    { rank: 6, name: 'Ruth Mote', points: 9650, avatar: '👩', transactions: 96 },
-    { rank: 7, name: 'John Mampioper', points: 8940, avatar: '👨', transactions: 89 },
-    { rank: 8, name: 'Grace Numberi', points: 8320, avatar: '👩', transactions: 83 },
-    { rank: 9, name: 'Michael Rumkorem', points: 7850, avatar: '👨', transactions: 78 },
-    { rank: 10, name: 'Christina Asso', points: 7420, avatar: '👩', transactions: 74 },
+    { rank: 1, name: 'Petrus Maury', points: 15420, gender: 'male', transactions: 156, badge: 'gold' },
+    { rank: 2, name: 'Maria Kambu', points: 14230, gender: 'female', transactions: 142, badge: 'silver' },
+    { rank: 3, name: 'Daniel Kogoya', points: 12850, gender: 'male', transactions: 128, badge: 'bronze' },
+    { rank: 4, name: 'Elisabeth Rumadas', points: 11540, gender: 'female', transactions: 115 },
+    { rank: 5, name: 'Andreas Kareth', points: 10820, gender: 'male', transactions: 108 },
+    { rank: 6, name: 'Ruth Mote', points: 9650, gender: 'female', transactions: 96 },
+    { rank: 7, name: 'John Mampioper', points: 8940, gender: 'male', transactions: 89 },
+    { rank: 8, name: 'Grace Numberi', points: 8320, gender: 'female', transactions: 83 },
+    { rank: 9, name: 'Michael Rumkorem', points: 7850, gender: 'male', transactions: 78 },
+    { rank: 10, name: 'Christina Asso', points: 7420, gender: 'female', transactions: 74 },
   ];
 
   const currentUser = {
     rank: 24,
     name: 'Kamu',
     points: 5240,
-    avatar: '😊',
+    gender: 'neutral',
     transactions: 52,
   };
 
@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
   return (
     <div className="w-full bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#5A1F7B] to-[#B481B8] text-white p-6 rounded-b-3xl shadow-xl">
+      <div className="bg-gradient-to-br from-[#6379B9] to-[#E29B06] text-white p-6 rounded-b-3xl shadow-xl">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Trophy size={32} />
           <h1 className="text-2xl font-bold">Papan Peringkat</h1>
@@ -53,23 +53,25 @@ export default function LeaderboardPage() {
         <div className="bg-white rounded-2xl shadow-lg p-1 grid grid-cols-2 gap-1">
           <button
             onClick={() => setUserType('pengguna')}
-            className={`py-3 rounded-xl font-semibold transition-all ${
+            className={`py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
               userType === 'pengguna'
                 ? 'bg-gradient-to-r from-[#E29B06] to-[#6379B9] text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            👥 Pengguna
+            <Users size={18} />
+            Pengguna
           </button>
           <button
             onClick={() => setUserType('bisnis')}
-            className={`py-3 rounded-xl font-semibold transition-all ${
+            className={`py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
               userType === 'bisnis'
                 ? 'bg-gradient-to-r from-[#E29B06] to-[#6379B9] text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            🏪 Bisnis
+            <Store size={18} />
+            Bisnis
           </button>
         </div>
       </div>
@@ -88,7 +90,7 @@ export default function LeaderboardPage() {
               onClick={() => setTimePeriod(period.value)}
               className={`px-4 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
                 timePeriod === period.value
-                  ? 'bg-[#5A1F7B] text-white shadow-md'
+                  ? 'bg-[#6379B9] text-white shadow-md'
                   : 'bg-white text-gray-600 hover:bg-gray-50'
               }`}
             >
@@ -146,7 +148,7 @@ export default function LeaderboardPage() {
       {/* Leaderboard List */}
       <div className="px-4 pb-6">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="bg-gradient-to-r from-[#5A1F7B] to-[#B481B8] text-white px-4 py-3">
+          <div className="bg-gradient-to-r from-[#6379B9] to-[#E29B06] text-white px-4 py-3">
             <h3 className="font-bold">Peringkat 4-10</h3>
           </div>
           {leaderboardPengguna.slice(3).map((user) => (
@@ -157,7 +159,7 @@ export default function LeaderboardPage() {
 
       {/* Current User Position */}
       <div className="px-4 pb-6">
-        <div className="bg-gradient-to-r from-[#6379B9] to-[#5A1F7B] text-white rounded-2xl p-4 shadow-lg">
+        <div className="bg-gradient-to-r from-[#6379B9] to-[#E29B06] text-white rounded-2xl p-4 shadow-lg">
           <div className="text-sm text-white/80 mb-2">Posisi Kamu</div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -168,13 +170,19 @@ export default function LeaderboardPage() {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl">{currentUser.avatar}</div>
-              <div className="text-xs text-white/80">{currentUser.transactions} transaksi</div>
+              <UserCircle2
+                size={48}
+                className={currentUser.gender === 'neutral' ? 'text-white' : currentUser.gender === 'female' ? 'text-pink-300' : 'text-blue-300'}
+              />
+              <div className="text-xs text-white/80 mt-1">{currentUser.transactions} transaksi</div>
             </div>
           </div>
           <div className="mt-3 pt-3 border-t border-white/20">
             <div className="text-xs text-white/80">Naik ke Top 10 untuk hadiah Rp500K!</div>
-            <div className="text-sm font-semibold mt-1">Butuh 2,180 poin lagi 💪</div>
+            <div className="text-sm font-semibold mt-1 flex items-center gap-1">
+              Butuh 2,180 poin lagi
+              <Flame size={16} className="text-orange-300" />
+            </div>
           </div>
         </div>
       </div>
@@ -207,8 +215,13 @@ function TopRankCard({ rank, data, badge, isFirst = false }) {
 
         {/* Avatar */}
         <div className="text-center mt-4 mb-2">
-          <div className={`text-4xl mb-2 ${isFirst ? 'text-5xl' : ''}`}>{data.avatar}</div>
-          <div className={`font-bold text-gray-800 ${isFirst ? 'text-base' : 'text-sm'}`}>
+          <div className={`mx-auto flex items-center justify-center ${isFirst ? 'w-16 h-16' : 'w-12 h-12'}`}>
+            <UserCircle2
+              size={isFirst ? 64 : 48}
+              className={data.gender === 'female' ? 'text-pink-500' : 'text-blue-500'}
+            />
+          </div>
+          <div className={`font-bold text-gray-800 mt-2 ${isFirst ? 'text-base' : 'text-sm'}`}>
             {data.name.split(' ')[0]}
           </div>
         </div>
@@ -234,31 +247,22 @@ function LeaderboardRow({ user }) {
   return (
     <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-[#B481B8]/20 flex items-center justify-center font-bold text-[#5A1F7B]">
+        <div className="w-8 h-8 rounded-full bg-[#6379B9]/20 flex items-center justify-center font-bold text-[#6379B9]">
           {user.rank}
         </div>
-        <div className="text-3xl">{user.avatar}</div>
+        <UserCircle2
+          size={40}
+          className={user.gender === 'female' ? 'text-pink-500' : 'text-blue-500'}
+        />
         <div>
           <div className="font-semibold text-gray-800">{user.name}</div>
           <div className="text-xs text-gray-500">{user.transactions} transaksi</div>
         </div>
       </div>
       <div className="text-right">
-        <div className="font-bold text-[#5A1F7B]">{user.points.toLocaleString('id-ID')}</div>
+        <div className="font-bold text-[#6379B9]">{user.points.toLocaleString('id-ID')}</div>
         <div className="text-xs text-gray-500">poin</div>
       </div>
     </div>
-  );
-}
-
-function Gift({ size }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 12v10H4V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M22 7H2v5h20V7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12 22V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
   );
 }

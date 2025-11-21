@@ -303,7 +303,7 @@ function RewardCard({ reward, userPoints }) {
         <div className="text-center mb-2">
           <div className="text-xs text-gray-500">{reward.value}</div>
           {reward.date && (
-            <div className="text-xs text-[#5A1F7B] mt-1">📅 {reward.date}</div>
+            <div className="text-xs text-[#6379B9] mt-1">📅 {reward.date}</div>
           )}
         </div>
 

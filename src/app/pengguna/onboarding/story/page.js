@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, Sparkles, Zap, Gift, ArrowRight } from 'lucide-react';
+import { ChevronRight, Sparkles, Zap, Gift, ArrowRight, Smartphone, Shield, TrendingUp, Rocket } from 'lucide-react';
 
 export default function PenggunaStoryPage() {
   const router = useRouter();
@@ -31,25 +31,29 @@ export default function PenggunaStoryPage() {
       icon: Sparkles,
       title: 'Kenalan dengan QRIS',
       description: `Hai ${userData?.nama || 'Kak'}! QRIS adalah cara bayar yang super praktis. Tinggal scan QR, bayar tanpa ribet kembalian!`,
-      illustration: '📱'
+      illustration: Smartphone,
+      illustrationColor: '#E29B06'
     },
     {
       icon: Zap,
       title: 'Cepat & Aman',
       description: 'Ga perlu antri lama, ga khawatir uang hilang. Semua transaksi tercatat dengan aman dan real-time!',
-      illustration: '⚡'
+      illustration: Shield,
+      illustrationColor: '#10b981'
     },
     {
       icon: Gift,
       title: 'Dapat Hadiah!',
       description: 'Setiap transaksi QRIS, Anda bisa dapat poin dan cashback. Kumpulin poin, tukar hadiah menarik!',
-      illustration: '🎁'
+      illustration: TrendingUp,
+      illustrationColor: '#6379B9'
     },
     {
       icon: ArrowRight,
       title: 'Yuk Mulai!',
       description: 'Siap jelajahi dunia pembayaran digital? Mari kita mulai perjalanan QRIS Anda!',
-      illustration: '🚀'
+      illustration: Rocket,
+      illustrationColor: '#5A1F7B'
     }
   ];
 
@@ -73,13 +77,14 @@ export default function PenggunaStoryPage() {
       const updatedUser = { ...userData, onboardingComplete: true };
       localStorage.setItem('petatasUser', JSON.stringify(updatedUser));
     }
-    router.push('/galeri');
+    router.push('/pengguna/dashboard');
   };
 
   if (!userData) return null;
 
   const slide = slides[currentSlide];
   const SlideIcon = slide.icon;
+  const IllustrationIcon = slide.illustration;
 
   return (
     <div className="min-h-screen flex flex-col px-4 py-6 relative overflow-hidden" style={{
@@ -137,8 +142,15 @@ export default function PenggunaStoryPage() {
 
           {/* Illustration */}
           <div className="flex justify-center mb-6">
-            <div className="text-7xl animate-bounce">
-              {slide.illustration}
+            <div className="relative w-24 h-24 rounded-full flex items-center justify-center animate-bounce" style={{
+              background: `rgba(${parseInt(slide.illustrationColor.slice(1,3), 16)}, ${parseInt(slide.illustrationColor.slice(3,5), 16)}, ${parseInt(slide.illustrationColor.slice(5,7), 16)}, 0.1)`,
+              border: `3px solid ${slide.illustrationColor}40`,
+              boxShadow: `0 0 40px ${slide.illustrationColor}40`
+            }}>
+              <IllustrationIcon className="w-14 h-14" style={{
+                color: slide.illustrationColor,
+                filter: `drop-shadow(0 0 10px ${slide.illustrationColor}80)`
+              }} />
             </div>
           </div>
 

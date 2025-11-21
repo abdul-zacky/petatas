@@ -102,7 +102,7 @@ export default function ChatbotPage() {
   return (
     <div className="h-full flex flex-col bg-white w-full">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#6379B9] to-[#5A1F7B] text-white p-4 shadow-lg">
+      <div className="bg-gradient-to-r from-[#6379B9] to-[#E29B06] text-white p-4 shadow-lg">
         <div className="max-w-md mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
@@ -197,7 +197,7 @@ export default function ChatbotPage() {
             </button>
 
             {/* Camera Button */}
-            <button className="w-10 h-10 bg-[#B481B8]/10 text-[#5A1F7B] rounded-full flex items-center justify-center hover:bg-[#B481B8]/20 transition-colors flex-shrink-0">
+            <button className="w-10 h-10 bg-[#E29B06]/10 text-[#E29B06] rounded-full flex items-center justify-center hover:bg-[#E29B06]/20 transition-colors flex-shrink-0">
               <Camera size={20} />
             </button>
 
@@ -222,7 +222,7 @@ export default function ChatbotPage() {
               disabled={!inputText.trim()}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
                 inputText.trim()
-                  ? 'bg-gradient-to-r from-[#6379B9] to-[#5A1F7B] text-white hover:shadow-lg'
+                  ? 'bg-gradient-to-r from-[#6379B9] to-[#E29B06] text-white hover:shadow-lg'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
             >

@@ -131,10 +131,10 @@ export default function ProfilePage() {
             bgColor="from-[#E29B06]/10 to-[#E29B06]/20"
           />
           <StatCard
-            icon={<Trophy className="text-[#5A1F7B]" size={24} />}
+            icon={<Trophy className="text-[#6379B9]" size={24} />}
             label="Peringkat"
             value={`#${stats.currentRank}`}
-            bgColor="from-[#5A1F7B]/10 to-[#B481B8]/20"
+            bgColor="from-[#6379B9]/10 to-[#6379B9]/20"
           />
           <StatCard
             icon={<ShoppingCart className="text-[#6379B9]" size={24} />}
@@ -143,10 +143,10 @@ export default function ProfilePage() {
             bgColor="from-[#6379B9]/10 to-[#6379B9]/20"
           />
           <StatCard
-            icon={<Users className="text-[#B481B8]" size={24} />}
+            icon={<Users className="text-[#E29B06]" size={24} />}
             label="Referral"
             value={stats.referrals}
-            bgColor="from-[#B481B8]/10 to-[#B481B8]/20"
+            bgColor="from-[#E29B06]/10 to-[#E29B06]/20"
           />
           <StatCard
             icon={<Target className="text-[#E29B06]" size={24} />}

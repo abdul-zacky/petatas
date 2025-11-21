@@ -152,10 +152,10 @@ export default function HomePage() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <TrendingUp className="text-purple-600" size={24} />
+            <TrendingUp className="text-[#6379B9]" size={24} />
             <h2 className="text-xl font-bold text-gray-800">Tantangan Mingguan</h2>
           </div>
-          <div className="flex items-center gap-1 text-purple-600 text-sm">
+          <div className="flex items-center gap-1 text-[#6379B9] text-sm">
             <Clock size={16} />
             <span>Reset: 4h 12j</span>
           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Star, Gift, Users, Target, Clock, ChevronRight, Zap, Calendar } from 'lucide-react';
+import { Star, Gift, Users, Target, Clock, ChevronRight, Zap, Calendar, GraduationCap, Wallet, Share2, Sparkles, Flame, HandHeart } from 'lucide-react';
 
 export default function ChallengesPage() {
   const [userData] = useState({
@@ -21,7 +21,9 @@ export default function ChallengesPage() {
       progress: 1,
       target: 2,
       reward: 150,
-      icon: '🎓',
+      icon: 'GraduationCap',
+      iconColor: 'text-blue-600',
+      iconBg: 'bg-blue-100',
       timeLeft: '18j 24m',
     },
     {
@@ -31,7 +33,9 @@ export default function ChallengesPage() {
       progress: 35000,
       target: 50000,
       reward: 100,
-      icon: '💰',
+      icon: 'Wallet',
+      iconColor: 'text-green-600',
+      iconBg: 'bg-green-100',
       timeLeft: '18j 24m',
       showCurrency: true,
     },
@@ -42,7 +46,9 @@ export default function ChallengesPage() {
       progress: 0,
       target: 1,
       reward: 200,
-      icon: '📱',
+      icon: 'Share2',
+      iconColor: 'text-[#E29B06]',
+      iconBg: 'bg-[#E29B06]/10',
       timeLeft: '18j 24m',
     },
   ];
@@ -56,7 +62,9 @@ export default function ChallengesPage() {
       target: 5,
       reward: 300,
       bonus: 'Rp30K',
-      icon: '🌟',
+      icon: 'Sparkles',
+      iconColor: 'text-yellow-600',
+      iconBg: 'bg-yellow-100',
       timeLeft: '4h 12j',
     },
     {
@@ -67,7 +75,9 @@ export default function ChallengesPage() {
       target: 7,
       reward: 500,
       bonus: 'Rp50K',
-      icon: '🔥',
+      icon: 'Flame',
+      iconColor: 'text-orange-600',
+      iconBg: 'bg-orange-100',
       timeLeft: '4h 12j',
     },
     {
@@ -78,7 +88,9 @@ export default function ChallengesPage() {
       target: 3,
       reward: 600,
       bonus: 'Rp75K',
-      icon: '👥',
+      icon: 'Users',
+      iconColor: 'text-indigo-600',
+      iconBg: 'bg-indigo-100',
       timeLeft: '4h 12j',
     },
   ];
@@ -99,7 +111,10 @@ export default function ChallengesPage() {
       <div className="bg-gradient-to-br from-[#E29B06] to-[#6379B9] rounded-2xl p-6 text-white shadow-xl">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h1 className="text-2xl font-bold">Halo, Kaka {userData.name.split(' ')[0]}! 👋</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold">Halo, Kaka {userData.name.split(' ')[0]}!</h1>
+              <HandHeart size={24} className="text-white" />
+            </div>
             <p className="text-white/80 text-sm mt-1">Mari selesaikan tantangan hari ini</p>
           </div>
           <div className="bg-white/20 backdrop-blur-sm rounded-xl px-3 py-2">
@@ -153,10 +168,10 @@ export default function ChallengesPage() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Calendar className="text-[#5A1F7B]" size={24} />
+            <Calendar className="text-[#6379B9]" size={24} />
             <h2 className="text-xl font-bold text-gray-800">Tantangan Mingguan</h2>
           </div>
-          <div className="flex items-center gap-1 text-[#5A1F7B] text-sm">
+          <div className="flex items-center gap-1 text-[#6379B9] text-sm">
             <Clock size={16} />
             <span>4h 12j</span>
           </div>
@@ -170,7 +185,7 @@ export default function ChallengesPage() {
       </div>
 
       {/* Referral Section */}
-      <div className="bg-gradient-to-br from-[#6379B9] to-[#5A1F7B] rounded-2xl p-6 text-white shadow-xl">
+      <div className="bg-gradient-to-br from-[#6379B9] to-[#E29B06] rounded-2xl p-6 text-white shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <Users size={28} />
           <h2 className="text-xl font-bold">Program Referral</h2>
@@ -209,7 +224,7 @@ export default function ChallengesPage() {
           </div>
         </div>
 
-        <button className="w-full bg-white text-[#5A1F7B] font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
+        <button className="w-full bg-white text-[#6379B9] font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
           <Gift size={20} />
           Ajak Teman Sekarang
           <ChevronRight size={20} />
@@ -232,12 +247,25 @@ function ChallengeCard({ challenge }) {
     return `${challenge.progress}/${challenge.target}`;
   };
 
+  const iconMap = {
+    GraduationCap: GraduationCap,
+    Wallet: Wallet,
+    Share2: Share2,
+    Sparkles: Sparkles,
+    Flame: Flame,
+    Users: Users,
+  };
+
+  const IconComponent = iconMap[challenge.icon];
+
   return (
     <div className={`bg-white rounded-xl p-4 shadow-md border-2 transition-all ${
       isComplete ? 'border-green-400 bg-green-50' : 'border-transparent'
     }`}>
       <div className="flex items-start gap-3">
-        <div className="text-4xl">{challenge.icon}</div>
+        <div className={`w-12 h-12 rounded-xl ${challenge.iconBg} flex items-center justify-center`}>
+          <IconComponent className={challenge.iconColor} size={28} />
+        </div>
         <div className="flex-1">
           <div className="flex items-start justify-between mb-1">
             <h3 className="font-bold text-gray-800">{challenge.title}</h3>
