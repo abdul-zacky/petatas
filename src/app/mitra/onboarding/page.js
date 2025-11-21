@@ -18,12 +18,8 @@ export default function MitraOnboardingPage() {
   }, [router]);
 
   const handleComplete = () => {
-    // Mark onboarding as complete
-    if (userData) {
-      const updatedUser = { ...userData, onboardingComplete: true };
-      localStorage.setItem('petatasUser', JSON.stringify(updatedUser));
-    }
-    router.push('/galeri');
+    // Navigate to story page
+    router.push('/mitra/onboarding/story');
   };
 
   if (!userData) return null;
@@ -126,10 +122,10 @@ export default function MitraOnboardingPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-sm mb-0.5" style={{ color: '#1B1B1E' }}>
-                    Pendaftaran Mudah
+                    Daftar QRIS Mudah
                   </h3>
                   <p className="text-xs leading-relaxed" style={{ color: '#8B7355' }}>
-                    Proses onboarding dipandu langkah demi langkah
+                    Verifikasi instant dengan AI dalam 5-15 menit
                   </p>
                 </div>
               </div>
@@ -144,10 +140,10 @@ export default function MitraOnboardingPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm mb-0.5" style={{ color: '#1B1B1E' }}>
-                  Tingkatkan Omzet
+                  Omzet Naik +75%
                 </h3>
                 <p className="text-xs leading-relaxed" style={{ color: '#8B7355' }}>
-                  Jangkau lebih banyak pelanggan digital
+                  Rata-rata mitra mengalami peningkatan omzet
                 </p>
               </div>
             </div>
@@ -161,10 +157,10 @@ export default function MitraOnboardingPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm mb-0.5" style={{ color: '#1B1B1E' }}>
-                  Jaringan Komunitas
+                  Challenge & Rewards
                 </h3>
                 <p className="text-xs leading-relaxed" style={{ color: '#8B7355' }}>
-                  Bergabung dengan komunitas UMKM lokal
+                  Selesaikan target transaksi, menangkan hadiah mingguan
                 </p>
               </div>
             </div>
@@ -178,10 +174,10 @@ export default function MitraOnboardingPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm mb-0.5" style={{ color: '#1B1B1E' }}>
-                  Bantuan AI 24/7
+                  Kaka AI - Asisten 24/7
                 </h3>
                 <p className="text-xs leading-relaxed" style={{ color: '#8B7355' }}>
-                  Dukungan teknis dan bisnis kapan saja
+                  Bantuan teknis, tips bisnis, voice & chat support
                 </p>
               </div>
             </div>

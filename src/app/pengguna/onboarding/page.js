@@ -18,12 +18,8 @@ export default function PenggunaOnboardingPage() {
   }, [router]);
 
   const handleComplete = () => {
-    // Mark onboarding as complete
-    if (userData) {
-      const updatedUser = { ...userData, onboardingComplete: true };
-      localStorage.setItem('petatasUser', JSON.stringify(updatedUser));
-    }
-    router.push('/galeri');
+    // Navigate to story page
+    router.push('/pengguna/onboarding/story');
   };
 
   if (!userData) return null;
@@ -113,10 +109,10 @@ export default function PenggunaOnboardingPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm mb-0.5" style={{ color: '#1B1B1E' }}>
-                  Jelajahi AR & Cerita
+                  Bayar dengan QRIS
                 </h3>
                 <p className="text-xs leading-relaxed" style={{ color: '#8B7355' }}>
-                  Pengalaman AR dan cerita budaya yang interaktif
+                  Scan QR, bayar cepat tanpa ribet uang pas
                 </p>
               </div>
             </div>
@@ -130,10 +126,10 @@ export default function PenggunaOnboardingPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm mb-0.5" style={{ color: '#1B1B1E' }}>
-                  Komunitas Budaya
+                  Challenge & Leaderboard
                 </h3>
                 <p className="text-xs leading-relaxed" style={{ color: '#8B7355' }}>
-                  Bergabung dengan komunitas pecinta budaya lokal
+                  Selesaikan challenge, kumpulkan poin, menangkan hadiah
                 </p>
               </div>
             </div>
@@ -147,10 +143,10 @@ export default function PenggunaOnboardingPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-sm mb-0.5" style={{ color: '#1B1B1E' }}>
-                  Konten Kreatif
+                  Referral & Rewards
                 </h3>
                 <p className="text-xs leading-relaxed" style={{ color: '#8B7355' }}>
-                  Buat dan bagikan konten budaya Anda sendiri
+                  Ajak teman, dapat bonus dan cashback
                 </p>
               </div>
             </div>

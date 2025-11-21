@@ -7,6 +7,14 @@ import { Home, Camera, Image, BookOpen, User } from 'lucide-react';
 export default function BottomNav() {
   const pathname = usePathname();
 
+  // Hide bottom nav on auth and onboarding pages
+  const hiddenPaths = ['/auth/signup', '/auth/questionnaire', '/pengguna/onboarding', '/mitra/onboarding'];
+  const shouldHide = hiddenPaths.some(path => pathname?.startsWith(path));
+
+  if (shouldHide) {
+    return null;
+  }
+
   const handleSmoothScroll = (e, href) => {
     if (href.startsWith('#')) {
       e.preventDefault();
@@ -19,10 +27,10 @@ export default function BottomNav() {
 
   const navItems = [
     {
-      href: '/',
+      href: '/landing',
       icon: Home,
       label: 'Beranda',
-      active: pathname === '/',
+      active: pathname === '/landing',
       color: '#D4A373',
       neon: '#F4A460'
     },
