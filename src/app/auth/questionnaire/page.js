@@ -261,11 +261,14 @@ export default function QuestionnairePage() {
   const QuestionIcon = currentQuestion.icon;
 
   return (
-    <div className="h-screen flex flex-col px-4 pt-6 pb-8 relative overflow-y-auto" style={{
-      background: 'linear-gradient(135deg, #ffffff 0%, #f8f5ff 50%, #fff9f5 100%)'
-    }}>
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center">
+      {/* Mobile Container */}
+      <div className="relative w-full max-w-[430px] h-full flex flex-col shadow-2xl overflow-y-auto" style={{
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8f5ff 50%, #fff9f5 100%)'
+      }}>
+        <div className="flex flex-col px-4 pt-6 pb-8 relative min-h-full">
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: 'linear-gradient(#6379B9 1px, transparent 1px), linear-gradient(90deg, #6379B9 1px, transparent 1px)',
           backgroundSize: '50px 50px',
@@ -480,29 +483,31 @@ export default function QuestionnairePage() {
         )}
       </div>
 
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-          }
-          33% {
-            transform: translateY(-20px) translateX(10px);
-          }
-          66% {
-            transform: translateY(-10px) translateX(-10px);
-          }
-        }
+          {/* Animations */}
+          <style jsx>{`
+            @keyframes float {
+              0%, 100% {
+                transform: translateY(0) translateX(0);
+              }
+              33% {
+                transform: translateY(-20px) translateX(10px);
+              }
+              66% {
+                transform: translateY(-10px) translateX(-10px);
+              }
+            }
 
-        @keyframes gridMove {
-          0% {
-            transform: translateY(0);
-          }
-          100% {
-            transform: translateY(50px);
-          }
-        }
-      `}</style>
+            @keyframes gridMove {
+              0% {
+                transform: translateY(0);
+              }
+              100% {
+                transform: translateY(50px);
+              }
+            }
+          `}</style>
+        </div>
+      </div>
     </div>
   );
 }

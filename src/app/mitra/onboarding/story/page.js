@@ -114,11 +114,14 @@ export default function MitraStoryPage() {
   const SlideIcon = slide.icon;
 
   return (
-    <div className="min-h-screen flex flex-col px-4 py-6 relative overflow-hidden" style={{
-      background: 'linear-gradient(135deg, #ffffff 0%, #f8f5ff 50%, #fff9f5 100%)'
-    }}>
-      {/* Animated Background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ maxWidth: 'inherit' }}>
+    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center">
+      {/* Mobile Container */}
+      <div className="relative w-full max-w-[430px] h-full flex flex-col shadow-2xl overflow-y-auto" style={{
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8f5ff 50%, #fff9f5 100%)'
+      }}>
+        <div className="flex flex-col px-4 py-6 relative min-h-full">
+          {/* Animated Background */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: 'linear-gradient(#6379B9 1px, transparent 1px), linear-gradient(90deg, #6379B9 1px, transparent 1px)',
           backgroundSize: '50px 50px',
@@ -265,38 +268,40 @@ export default function MitraStoryPage() {
         )}
       </div>
 
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-          }
-          33% {
-            transform: translateY(-20px) translateX(10px);
-          }
-          66% {
-            transform: translateY(-10px) translateX(-10px);
-          }
-        }
+          {/* Animations */}
+          <style jsx>{`
+            @keyframes float {
+              0%, 100% {
+                transform: translateY(0) translateX(0);
+              }
+              33% {
+                transform: translateY(-20px) translateX(10px);
+              }
+              66% {
+                transform: translateY(-10px) translateX(-10px);
+              }
+            }
 
-        @keyframes gridMove {
-          0% {
-            transform: translateY(0);
-          }
-          100% {
-            transform: translateY(50px);
-          }
-        }
+            @keyframes gridMove {
+              0% {
+                transform: translateY(0);
+              }
+              100% {
+                transform: translateY(50px);
+              }
+            }
 
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-      `}</style>
+            @keyframes shimmer {
+              0% {
+                transform: translateX(-100%);
+              }
+              100% {
+                transform: translateX(100%);
+              }
+            }
+          `}</style>
+        </div>
+      </div>
     </div>
   );
 }
