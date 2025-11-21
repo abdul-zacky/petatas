@@ -34,25 +34,25 @@ export default function MitraStoryPage() {
       icon: TrendingUp,
       title: 'Tingkatkan Omzet',
       description: `${userData?.nama || 'Kak'}, bayangkan pelanggan bisa bayar dengan mudah tanpa ribet uang pas. Usaha jadi lebih cepat, pelanggan makin banyak!`,
-      illustration: '📈'
+      image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: Shield,
       title: 'Aman & Praktis',
       description: 'Ga perlu khawatir uang palsu atau uang hilang. Semua transaksi tercatat otomatis, lebih aman dan transparan!',
-      illustration: '🔒'
+      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: Users,
       title: 'Jangkau Lebih Luas',
       description: 'Pelanggan jaman sekarang suka bayar digital. Dengan QRIS, usaha Anda bisa ditemukan lebih banyak orang!',
-      illustration: '🌟'
+      image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: ArrowRight,
       title: 'Ayo Mulai!',
       description: 'Siap tingkatkan usaha Anda? Mari bergabung dengan ribuan mitra QRIS lainnya!',
-      illustration: '🚀'
+      image: 'https://images.unsplash.com/photo-1559526324-593bc073d938?w=800&h=1000&fit=crop&q=80'
     }
   ];
 
@@ -61,25 +61,25 @@ export default function MitraStoryPage() {
       icon: TrendingUp,
       title: 'Maksimalkan QRIS',
       description: `Selamat ${userData?.nama || 'Kak'}! Anda sudah punya QRIS. Sekarang saatnya maksimalkan potensi usaha Anda dengan challenge dan rewards!`,
-      illustration: '💪'
+      image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: Shield,
       title: 'Dapatkan Insight',
       description: 'Lacak performa transaksi, lihat jam ramai pelanggan, dan dapatkan tips untuk tingkatkan penjualan!',
-      illustration: '📊'
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: Users,
       title: 'Komunitas & Rewards',
       description: 'Bergabung dengan komunitas mitra, ikuti challenge, dan dapatkan hadiah menarik setiap minggu!',
-      illustration: '🎁'
+      image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: ArrowRight,
       title: 'Tingkatkan Terus!',
       description: 'Mari bersama-sama kembangkan usaha dan raih kesuksesan!',
-      illustration: '🚀'
+      image: 'https://images.unsplash.com/photo-1559526324-593bc073d938?w=800&h=1000&fit=crop&q=80'
     }
   ];
 
@@ -156,57 +156,91 @@ export default function MitraStoryPage() {
       </div>
 
       {/* Story Content */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-lg mx-auto relative z-10">
-        <div className="w-full relative rounded-3xl p-8 overflow-hidden" style={{
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-2xl mx-auto relative z-10">
+        {/* Image Card */}
+        <div className="w-full relative rounded-3xl overflow-hidden" style={{
           background: 'rgba(255, 255, 255, 0.8)',
           backdropFilter: 'blur(20px)',
           border: '2px solid rgba(99, 121, 185, 0.3)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 0 20px rgba(99, 121, 185, 0.05)'
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)'
         }}>
-          <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
-            background: 'radial-gradient(circle at top, rgba(99, 121, 185, 0.3), transparent 70%)'
-          }} />
+          {/* Image with 4:5 ratio */}
+          <div className="relative w-full" style={{ paddingBottom: '125%' }}>
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+        </div>
 
-          {/* Illustration */}
-          <div className="flex justify-center mb-6">
-            <div className="text-7xl animate-bounce">
-              {slide.illustration}
-            </div>
+        {/* Navigation Controls Below Image */}
+        <div className="flex items-center justify-center gap-6 mt-6">
+          {/* Left Arrow */}
+          <button
+            onClick={() => currentSlide > 0 && setCurrentSlide(currentSlide - 1)}
+            disabled={currentSlide === 0}
+            className="w-14 h-14 rounded-full flex items-center justify-center transition-all"
+            style={{
+              background: currentSlide === 0 ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(10px)',
+              border: '2px solid rgba(99, 121, 185, 0.3)',
+              boxShadow: currentSlide === 0 ? 'none' : '0 4px 15px rgba(99, 121, 185, 0.2)',
+              cursor: currentSlide === 0 ? 'not-allowed' : 'pointer',
+              opacity: currentSlide === 0 ? 0.3 : 1
+            }}
+          >
+            <ChevronRight className="w-7 h-7 rotate-180" style={{ color: '#6379B9' }} />
+          </button>
+
+          {/* Progress Dots */}
+          <div className="flex items-center gap-2">
+            {slides.map((_, index) => (
+              <div
+                key={index}
+                className="transition-all duration-300"
+                style={{
+                  width: currentSlide === index ? '32px' : '8px',
+                  height: '8px',
+                  borderRadius: '4px',
+                  background: currentSlide === index
+                    ? 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)'
+                    : 'rgba(99, 121, 185, 0.3)',
+                  boxShadow: currentSlide === index ? '0 0 10px rgba(99, 121, 185, 0.5)' : 'none'
+                }}
+              />
+            ))}
           </div>
 
-          {/* Icon */}
-          <div className="flex justify-center mb-4">
-            <div className="relative w-16 h-16 rounded-full flex items-center justify-center" style={{
-              background: 'rgba(255, 255, 255, 0.7)',
-              border: '2px solid rgba(99, 121, 185, 0.4)',
-              boxShadow: '0 0 30px rgba(99, 121, 185, 0.3), inset 0 0 20px rgba(99, 121, 185, 0.1)'
-            }}>
-              <SlideIcon className="w-8 h-8" style={{
-                color: '#6379B9',
-                filter: 'drop-shadow(0 0 8px rgba(99, 121, 185, 0.5))'
-              }} />
-            </div>
-          </div>
-
-          {/* Title */}
-          <h2 className="text-2xl font-bold text-center mb-4 relative z-10" style={{
-            color: '#1B1B1E',
-            textShadow: '0 0 15px rgba(99, 121, 185, 0.2)'
-          }}>
-            {slide.title}
-          </h2>
-
-          {/* Description */}
-          <p className="text-base text-center leading-relaxed mb-8 relative z-10" style={{
-            color: '#8B7355'
-          }}>
-            {slide.description}
-          </p>
-
-          {/* Next Button */}
+          {/* Right Arrow */}
           <button
             onClick={handleNext}
-            className="w-full relative py-3.5 rounded-xl font-bold text-base text-white transition-all duration-300 overflow-hidden group"
+            className="w-14 h-14 rounded-full flex items-center justify-center transition-all"
+            style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(10px)',
+              border: '2px solid rgba(99, 121, 185, 0.3)',
+              boxShadow: '0 4px 15px rgba(99, 121, 185, 0.2)',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(99, 121, 185, 0.3)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(99, 121, 185, 0.2)';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <ChevronRight className="w-7 h-7" style={{ color: '#6379B9' }} />
+          </button>
+        </div>
+
+        {/* Action Button (only on last slide) */}
+        {currentSlide === slides.length - 1 && (
+          <button
+            onClick={handleFinish}
+            className="w-full max-w-md relative py-3 mt-6 rounded-xl font-bold text-base text-white transition-all duration-300 overflow-hidden group"
             style={{
               background: 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)',
               border: '2px solid rgba(99, 121, 185, 0.4)',
@@ -226,37 +260,9 @@ export default function MitraStoryPage() {
               background: 'linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
               animation: 'shimmer 2s infinite'
             }} />
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              {currentSlide < slides.length - 1 ? (
-                <>
-                  Lanjut
-                  <ChevronRight className="w-5 h-5" />
-                </>
-              ) : (
-                'Mulai Sekarang!'
-              )}
-            </span>
+            <span className="relative z-10">Mulai Sekarang!</span>
           </button>
-        </div>
-
-        {/* Progress Dots */}
-        <div className="flex items-center gap-2 mt-6">
-          {slides.map((_, index) => (
-            <div
-              key={index}
-              className="transition-all duration-300"
-              style={{
-                width: currentSlide === index ? '32px' : '8px',
-                height: '8px',
-                borderRadius: '4px',
-                background: currentSlide === index
-                  ? 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)'
-                  : 'rgba(99, 121, 185, 0.3)',
-                boxShadow: currentSlide === index ? '0 0 10px rgba(99, 121, 185, 0.5)' : 'none'
-              }}
-            />
-          ))}
-        </div>
+        )}
       </div>
 
       {/* Animations */}

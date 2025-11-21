@@ -31,29 +31,25 @@ export default function PenggunaStoryPage() {
       icon: Sparkles,
       title: 'Kenalan dengan QRIS',
       description: `Hai ${userData?.nama || 'Kak'}! QRIS adalah cara bayar yang super praktis. Tinggal scan QR, bayar tanpa ribet kembalian!`,
-      illustration: Smartphone,
-      illustrationColor: '#E29B06'
+      image: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: Zap,
       title: 'Cepat & Aman',
       description: 'Ga perlu antri lama, ga khawatir uang hilang. Semua transaksi tercatat dengan aman dan real-time!',
-      illustration: Shield,
-      illustrationColor: '#10b981'
+      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: Gift,
       title: 'Dapat Hadiah!',
       description: 'Setiap transaksi QRIS, Anda bisa dapat poin dan cashback. Kumpulin poin, tukar hadiah menarik!',
-      illustration: TrendingUp,
-      illustrationColor: '#6379B9'
+      image: 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: ArrowRight,
       title: 'Yuk Mulai!',
       description: 'Siap jelajahi dunia pembayaran digital? Mari kita mulai perjalanan QRIS Anda!',
-      illustration: Rocket,
-      illustrationColor: '#5A1F7B'
+      image: 'https://images.unsplash.com/photo-1559526324-593bc073d938?w=800&h=1000&fit=crop&q=80'
     }
   ];
 
@@ -129,64 +125,91 @@ export default function PenggunaStoryPage() {
       </div>
 
       {/* Story Content */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-lg mx-auto relative z-10">
-        <div className="w-full relative rounded-3xl p-8 overflow-hidden" style={{
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-2xl mx-auto relative z-10">
+        {/* Image Card */}
+        <div className="w-full relative rounded-3xl overflow-hidden" style={{
           background: 'rgba(255, 255, 255, 0.8)',
           backdropFilter: 'blur(20px)',
           border: '2px solid rgba(99, 121, 185, 0.3)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 0 20px rgba(99, 121, 185, 0.05)'
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)'
         }}>
-          <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
-            background: 'radial-gradient(circle at top, rgba(99, 121, 185, 0.3), transparent 70%)'
-          }} />
+          {/* Image with 4:5 ratio */}
+          <div className="relative w-full" style={{ paddingBottom: '125%' }}>
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+        </div>
 
-          {/* Illustration */}
-          <div className="flex justify-center mb-6">
-            <div className="relative w-24 h-24 rounded-full flex items-center justify-center animate-bounce" style={{
-              background: `rgba(${parseInt(slide.illustrationColor.slice(1,3), 16)}, ${parseInt(slide.illustrationColor.slice(3,5), 16)}, ${parseInt(slide.illustrationColor.slice(5,7), 16)}, 0.1)`,
-              border: `3px solid ${slide.illustrationColor}40`,
-              boxShadow: `0 0 40px ${slide.illustrationColor}40`
-            }}>
-              <IllustrationIcon className="w-14 h-14" style={{
-                color: slide.illustrationColor,
-                filter: `drop-shadow(0 0 10px ${slide.illustrationColor}80)`
-              }} />
-            </div>
+        {/* Navigation Controls Below Image */}
+        <div className="flex items-center justify-center gap-6 mt-6">
+          {/* Left Arrow */}
+          <button
+            onClick={() => currentSlide > 0 && setCurrentSlide(currentSlide - 1)}
+            disabled={currentSlide === 0}
+            className="w-14 h-14 rounded-full flex items-center justify-center transition-all"
+            style={{
+              background: currentSlide === 0 ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(10px)',
+              border: '2px solid rgba(99, 121, 185, 0.3)',
+              boxShadow: currentSlide === 0 ? 'none' : '0 4px 15px rgba(99, 121, 185, 0.2)',
+              cursor: currentSlide === 0 ? 'not-allowed' : 'pointer',
+              opacity: currentSlide === 0 ? 0.3 : 1
+            }}
+          >
+            <ChevronRight className="w-7 h-7 rotate-180" style={{ color: '#6379B9' }} />
+          </button>
+
+          {/* Progress Dots */}
+          <div className="flex items-center gap-2">
+            {slides.map((_, index) => (
+              <div
+                key={index}
+                className="transition-all duration-300"
+                style={{
+                  width: currentSlide === index ? '32px' : '8px',
+                  height: '8px',
+                  borderRadius: '4px',
+                  background: currentSlide === index
+                    ? 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)'
+                    : 'rgba(99, 121, 185, 0.3)',
+                  boxShadow: currentSlide === index ? '0 0 10px rgba(99, 121, 185, 0.5)' : 'none'
+                }}
+              />
+            ))}
           </div>
 
-          {/* Icon */}
-          <div className="flex justify-center mb-4">
-            <div className="relative w-16 h-16 rounded-full flex items-center justify-center" style={{
-              background: 'rgba(255, 255, 255, 0.7)',
-              border: '2px solid rgba(99, 121, 185, 0.4)',
-              boxShadow: '0 0 30px rgba(99, 121, 185, 0.3), inset 0 0 20px rgba(99, 121, 185, 0.1)'
-            }}>
-              <SlideIcon className="w-8 h-8" style={{
-                color: '#6379B9',
-                filter: 'drop-shadow(0 0 8px rgba(99, 121, 185, 0.5))'
-              }} />
-            </div>
-          </div>
-
-          {/* Title */}
-          <h2 className="text-2xl font-bold text-center mb-4 relative z-10" style={{
-            color: '#1B1B1E',
-            textShadow: '0 0 15px rgba(99, 121, 185, 0.2)'
-          }}>
-            {slide.title}
-          </h2>
-
-          {/* Description */}
-          <p className="text-base text-center leading-relaxed mb-8 relative z-10" style={{
-            color: '#8B7355'
-          }}>
-            {slide.description}
-          </p>
-
-          {/* Next Button */}
+          {/* Right Arrow */}
           <button
             onClick={handleNext}
-            className="w-full relative py-3.5 rounded-xl font-bold text-base text-white transition-all duration-300 overflow-hidden group"
+            className="w-14 h-14 rounded-full flex items-center justify-center transition-all"
+            style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(10px)',
+              border: '2px solid rgba(99, 121, 185, 0.3)',
+              boxShadow: '0 4px 15px rgba(99, 121, 185, 0.2)',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(99, 121, 185, 0.3)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(99, 121, 185, 0.2)';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <ChevronRight className="w-7 h-7" style={{ color: '#6379B9' }} />
+          </button>
+        </div>
+
+        {/* Action Button (only on last slide) */}
+        {currentSlide === slides.length - 1 && (
+          <button
+            onClick={handleFinish}
+            className="w-full max-w-md relative py-3 mt-6 rounded-xl font-bold text-base text-white transition-all duration-300 overflow-hidden group"
             style={{
               background: 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)',
               border: '2px solid rgba(99, 121, 185, 0.4)',
@@ -206,37 +229,9 @@ export default function PenggunaStoryPage() {
               background: 'linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
               animation: 'shimmer 2s infinite'
             }} />
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              {currentSlide < slides.length - 1 ? (
-                <>
-                  Lanjut
-                  <ChevronRight className="w-5 h-5" />
-                </>
-              ) : (
-                'Mulai Sekarang!'
-              )}
-            </span>
+            <span className="relative z-10">Mulai Sekarang!</span>
           </button>
-        </div>
-
-        {/* Progress Dots */}
-        <div className="flex items-center gap-2 mt-6">
-          {slides.map((_, index) => (
-            <div
-              key={index}
-              className="transition-all duration-300"
-              style={{
-                width: currentSlide === index ? '32px' : '8px',
-                height: '8px',
-                borderRadius: '4px',
-                background: currentSlide === index
-                  ? 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)'
-                  : 'rgba(99, 121, 185, 0.3)',
-                boxShadow: currentSlide === index ? '0 0 10px rgba(99, 121, 185, 0.5)' : 'none'
-              }}
-            />
-          ))}
-        </div>
+        )}
       </div>
 
       {/* Animations */}
