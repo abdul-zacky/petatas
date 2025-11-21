@@ -12,19 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-<<<<<<< HEAD
-  title: "PETATAS - Platform Gamifikasi Adopsi QRIS Papua",
-  description: "Platform gamifikasi untuk meningkatkan adopsi QRIS di Papua dengan challenges, rewards, dan AI assistant",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
-=======
   title: "Petatas - AR Cultural Experience",
   description: "Jelajahi Budaya dengan Petatas",
->>>>>>> 5ac0626f3f20fa3dacfe6807f47eae119a5dc472
   icons: {
     icon: [
       { url: '/favicon.ico' },
