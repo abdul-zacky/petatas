@@ -1,14 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ChallengesPage from '@/components/petatas/ChallengesPage';
 import LeaderboardPage from '@/components/petatas/LeaderboardPage';
 import PointsPage from '@/components/petatas/PointsPage';
 import ChatbotPage from '@/components/petatas/ChatbotPage';
 import ProfilePage from '@/components/petatas/ProfilePage';
-import { Home, Trophy, Coins, MessageCircle, User } from 'lucide-react';
+import { Home, Trophy, Coins, MessageCircle, User, BookOpen } from 'lucide-react';
 
 export default function Dashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('challenges');
 
   const renderContent = () => {
@@ -39,7 +41,7 @@ export default function Dashboard() {
 
         {/* Bottom Navigation */}
         <nav className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-          <div className="grid grid-cols-5 h-14">
+          <div className="grid grid-cols-6 h-14">
             <button
               onClick={() => setActiveTab('challenges')}
               className={`flex flex-col items-center justify-center transition-all ${
@@ -74,6 +76,14 @@ export default function Dashboard() {
             >
               <Coins size={20} strokeWidth={activeTab === 'points' ? 2.5 : 2} />
               <span className="text-[9px] mt-0.5 font-medium">Poin</span>
+            </button>
+
+            <button
+              onClick={() => router.push('/pengguna/onboarding/story')}
+              className="flex flex-col items-center justify-center transition-all text-gray-400 hover:text-[#E29B06]"
+            >
+              <BookOpen size={20} strokeWidth={2} />
+              <span className="text-[9px] mt-0.5 font-medium">Cerita</span>
             </button>
 
             <button
