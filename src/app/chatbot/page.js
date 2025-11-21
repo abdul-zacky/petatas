@@ -113,10 +113,10 @@ export default function ChatbotPage() {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img src="/1.svg" alt="Petatas Logo" className="h-10" />
-              <h1 className="text-xl font-bold" style={{color: '#473C8B'}}>Chatbot Pacu Jalur</h1>
+              <h1 className="text-xl font-bold" style={{color: '#6379B9'}}>Chatbot Pacu Jalur</h1>
             </div>
             <div className="flex items-center gap-4">
-              <a href="/" className="text-sm font-medium transition hover:opacity-70" style={{color: '#473C8B'}}>
+              <a href="/" className="text-sm font-medium transition hover:opacity-70" style={{color: '#6379B9'}}>
                 ← Home
               </a>
             </div>
@@ -148,7 +148,7 @@ export default function ChatbotPage() {
                     <div className="flex-shrink-0">
                       <div
                         className="w-10 h-10 rounded-full flex items-center justify-center text-xl"
-                        style={{backgroundColor: '#473C8B'}}
+                        style={{backgroundColor: '#6379B9'}}
                       >
                         🤖
                       </div>
@@ -163,7 +163,7 @@ export default function ChatbotPage() {
                         : 'rounded-tr-none'
                     }`}
                     style={{
-                      backgroundColor: msg.role === 'bot' ? '#F0EBE3' : '#473C8B',
+                      backgroundColor: msg.role === 'bot' ? '#F0EBE3' : '#6379B9',
                       color: msg.role === 'bot' ? '#1B1B1E' : 'white',
                       border: msg.role === 'bot' ? '1px solid #D4A373' : 'none'
                     }}
@@ -191,7 +191,7 @@ export default function ChatbotPage() {
                   <div className="flex-shrink-0">
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center text-xl"
-                      style={{backgroundColor: '#473C8B'}}
+                      style={{backgroundColor: '#6379B9'}}
                     >
                       🤖
                     </div>
@@ -216,7 +216,7 @@ export default function ChatbotPage() {
           {/* Quick Suggestions */}
           {messages.length === 1 && !loading && (
             <div className="mb-4 animate-fadeIn">
-              <p className="text-sm font-semibold mb-2 px-2" style={{color: '#473C8B'}}>
+              <p className="text-sm font-semibold mb-2 px-2" style={{color: '#6379B9'}}>
                 💡 Pertanyaan cepat:
               </p>
               <div className="flex flex-wrap gap-2">
@@ -227,7 +227,7 @@ export default function ChatbotPage() {
                     className="px-3 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 shadow-sm"
                     style={{
                       backgroundColor: 'white',
-                      color: '#473C8B',
+                      color: '#6379B9',
                       border: '2px solid #D4A373'
                     }}
                   >
@@ -359,3 +359,4 @@ export default function ChatbotPage() {
     </div>
   );
 }
+

@@ -40,12 +40,12 @@ export default function MyPusakaPage() {
       <div className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group" style={{
         background: 'rgba(255, 255, 255, 0.7)',
         backdropFilter: 'blur(20px)',
-        border: '2px solid rgba(138, 127, 216, 0.25)',
+        border: '2px solid rgba(99, 121, 185, 0.25)',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)'
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-4px)';
-        e.currentTarget.style.boxShadow = '0 8px 32px rgba(138, 127, 216, 0.25)';
+        e.currentTarget.style.boxShadow = '0 8px 32px rgba(99, 121, 185, 0.25)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
@@ -54,7 +54,7 @@ export default function MyPusakaPage() {
       >
         {/* Hover glow effect */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" style={{
-          background: 'radial-gradient(circle at center, rgba(138, 127, 216, 0.15), transparent 70%)'
+          background: 'radial-gradient(circle at center, rgba(99, 121, 185, 0.15), transparent 70%)'
         }} />
 
         <div className="relative aspect-square">
@@ -78,15 +78,15 @@ export default function MyPusakaPage() {
               height={24}
               className="rounded-full"
               style={{
-                border: '2px solid rgba(138, 127, 216, 0.3)',
-                boxShadow: '0 0 8px rgba(138, 127, 216, 0.2)'
+                border: '2px solid rgba(99, 121, 185, 0.3)',
+                boxShadow: '0 0 8px rgba(99, 121, 185, 0.2)'
               }}
             />
-            <span className="text-xs" style={{ color: '#6B5FBD' }}>@{item.user.username}</span>
+            <span className="text-xs" style={{ color: '#7A8FD1' }}>@{item.user.username}</span>
           </div>
           <h3 className="font-bold mb-1 line-clamp-1" style={{
             color: '#1B1B1E',
-            textShadow: '0 0 10px rgba(138, 127, 216, 0.15)'
+            textShadow: '0 0 10px rgba(99, 121, 185, 0.15)'
           }}>{item.title}</h3>
           <p className="text-sm mb-2 line-clamp-2" style={{ color: '#8B7355' }}>{item.shortDescription}</p>
           <div className="flex items-center justify-between">
@@ -193,7 +193,7 @@ export default function MyPusakaPage() {
       <div className="fixed inset-0 pointer-events-none">
         {/* Floating Orbs */}
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full opacity-30" style={{
-          background: 'radial-gradient(circle, rgba(138, 127, 216, 0.3), transparent 70%)',
+          background: 'radial-gradient(circle, rgba(99, 121, 185, 0.3), transparent 70%)',
           animation: 'float 8s ease-in-out infinite',
           filter: 'blur(40px)'
         }} />
@@ -210,7 +210,7 @@ export default function MyPusakaPage() {
 
         {/* Animated Grid */}
         <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: 'linear-gradient(#473C8B 1px, transparent 1px), linear-gradient(90deg, #473C8B 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(#6379B9 1px, transparent 1px), linear-gradient(90deg, #6379B9 1px, transparent 1px)',
           backgroundSize: '50px 50px',
           animation: 'gridMove 20s linear infinite'
         }} />
@@ -221,12 +221,12 @@ export default function MyPusakaPage() {
         <div className="relative rounded-3xl p-6 mb-6 overflow-hidden" style={{
           background: 'rgba(255, 255, 255, 0.7)',
           backdropFilter: 'blur(20px)',
-          border: '2px solid rgba(138, 127, 216, 0.3)',
+          border: '2px solid rgba(99, 121, 185, 0.3)',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)'
         }}>
           {/* Subtle glow effect */}
           <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
-            background: 'radial-gradient(circle at top right, rgba(138, 127, 216, 0.2), transparent 70%)'
+            background: 'radial-gradient(circle at top right, rgba(99, 121, 185, 0.2), transparent 70%)'
           }} />
 
           <div className="flex items-start gap-4 mb-4 relative z-10">
@@ -238,14 +238,14 @@ export default function MyPusakaPage() {
                 height={80}
                 className="rounded-full"
                 style={{
-                  border: '3px solid rgba(138, 127, 216, 0.4)',
-                  boxShadow: '0 0 20px rgba(138, 127, 216, 0.3)'
+                  border: '3px solid rgba(99, 121, 185, 0.4)',
+                  boxShadow: '0 0 20px rgba(99, 121, 185, 0.3)'
                 }}
               />
               {/* Rotating ring around avatar */}
               <div className="absolute inset-0 rounded-full animate-spin" style={{
                 animationDuration: '8s',
-                background: 'conic-gradient(from 0deg, transparent, rgba(138, 127, 216, 0.3), transparent)',
+                background: 'conic-gradient(from 0deg, transparent, rgba(99, 121, 185, 0.3), transparent)',
                 padding: '2px',
                 zIndex: -1
               }} />
@@ -253,13 +253,13 @@ export default function MyPusakaPage() {
             <div className="flex-1">
               <h2 className="text-xl font-bold mb-1" style={{
                 color: '#1B1B1E',
-                textShadow: '0 0 15px rgba(138, 127, 216, 0.2)'
+                textShadow: '0 0 15px rgba(99, 121, 185, 0.2)'
               }}>
                 {userProfile.name}
               </h2>
               <p className="text-sm mb-2" style={{
-                color: '#6B5FBD',
-                textShadow: '0 0 10px rgba(138, 127, 216, 0.15)'
+                color: '#7A8FD1',
+                textShadow: '0 0 10px rgba(99, 121, 185, 0.15)'
               }}>
                 {userProfile.username}
               </p>
@@ -275,18 +275,18 @@ export default function MyPusakaPage() {
           <button
             className="relative w-full py-3 px-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all overflow-hidden group"
             style={{
-              background: 'linear-gradient(135deg, #473C8B 0%, #6B5FBD 100%)',
+              background: 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)',
               color: 'white',
-              border: '2px solid rgba(138, 127, 216, 0.4)',
-              boxShadow: '0 0 30px rgba(138, 127, 216, 0.3)',
+              border: '2px solid rgba(99, 121, 185, 0.4)',
+              boxShadow: '0 0 30px rgba(99, 121, 185, 0.3)',
               textShadow: '0 0 10px rgba(255, 255, 255, 0.5)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 40px rgba(138, 127, 216, 0.5)';
+              e.currentTarget.style.boxShadow = '0 0 40px rgba(99, 121, 185, 0.5)';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(138, 127, 216, 0.3)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(99, 121, 185, 0.3)';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
@@ -306,15 +306,15 @@ export default function MyPusakaPage() {
           <div className="relative rounded-2xl overflow-hidden" style={{
             background: 'rgba(255, 255, 255, 0.7)',
             backdropFilter: 'blur(20px)',
-            border: '2px solid rgba(138, 127, 216, 0.3)',
-            boxShadow: '0 0 20px rgba(138, 127, 216, 0.15)'
+            border: '2px solid rgba(99, 121, 185, 0.3)',
+            boxShadow: '0 0 20px rgba(99, 121, 185, 0.15)'
           }}>
             <Search
               className="absolute left-4 top-1/2 transform -translate-y-1/2"
               size={20}
               style={{
-                color: '#473C8B',
-                filter: 'drop-shadow(0 0 5px rgba(138, 127, 216, 0.4))'
+                color: '#6379B9',
+                filter: 'drop-shadow(0 0 5px rgba(99, 121, 185, 0.4))'
               }}
             />
             <input
@@ -337,13 +337,13 @@ export default function MyPusakaPage() {
             className="flex-1 py-3 px-4 rounded-2xl font-semibold transition-all relative overflow-hidden group"
             style={{
               background: activeTab === 'ar'
-                ? 'linear-gradient(135deg, #473C8B 0%, #6B5FBD 100%)'
+                ? 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)'
                 : 'rgba(255, 255, 255, 0.6)',
               color: activeTab === 'ar' ? 'white' : '#1B1B1E',
-              border: `2px solid ${activeTab === 'ar' ? 'rgba(138, 127, 216, 0.4)' : 'rgba(138, 127, 216, 0.25)'}`,
+              border: `2px solid ${activeTab === 'ar' ? 'rgba(99, 121, 185, 0.4)' : 'rgba(99, 121, 185, 0.25)'}`,
               boxShadow: activeTab === 'ar'
-                ? '0 0 30px rgba(138, 127, 216, 0.3)'
-                : '0 0 15px rgba(138, 127, 216, 0.15)',
+                ? '0 0 30px rgba(99, 121, 185, 0.3)'
+                : '0 0 15px rgba(99, 121, 185, 0.15)',
               backdropFilter: 'blur(10px)',
               textShadow: activeTab === 'ar' ? '0 0 10px rgba(255, 255, 255, 0.5)' : 'none'
             }}
@@ -361,13 +361,13 @@ export default function MyPusakaPage() {
             className="flex-1 py-3 px-4 rounded-2xl font-semibold transition-all relative overflow-hidden group"
             style={{
               background: activeTab === 'storybook'
-                ? 'linear-gradient(135deg, #473C8B 0%, #6B5FBD 100%)'
+                ? 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)'
                 : 'rgba(255, 255, 255, 0.6)',
               color: activeTab === 'storybook' ? 'white' : '#1B1B1E',
-              border: `2px solid ${activeTab === 'storybook' ? 'rgba(138, 127, 216, 0.4)' : 'rgba(138, 127, 216, 0.25)'}`,
+              border: `2px solid ${activeTab === 'storybook' ? 'rgba(99, 121, 185, 0.4)' : 'rgba(99, 121, 185, 0.25)'}`,
               boxShadow: activeTab === 'storybook'
-                ? '0 0 30px rgba(138, 127, 216, 0.3)'
-                : '0 0 15px rgba(138, 127, 216, 0.15)',
+                ? '0 0 30px rgba(99, 121, 185, 0.3)'
+                : '0 0 15px rgba(99, 121, 185, 0.15)',
               backdropFilter: 'blur(10px)',
               textShadow: activeTab === 'storybook' ? '0 0 10px rgba(255, 255, 255, 0.5)' : 'none'
             }}
@@ -447,3 +447,4 @@ export default function MyPusakaPage() {
     </div>
   );
 }
+

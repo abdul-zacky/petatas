@@ -39,7 +39,7 @@ export default function BottomNav() {
       icon: Camera,
       label: 'AR',
       active: pathname === '/ar',
-      defaultColor: '#473C8B', // Brand purple when not active
+      defaultColor: '#6379B9', // Brand purple when not active
       color: '#FFC857', // Brand yellow when active
       neon: '#FFD700'
     },
@@ -79,7 +79,7 @@ export default function BottomNav() {
           const Icon = item.icon;
           const isAR = item.label === 'AR';
           const buttonColor = item.active ? item.color : (item.defaultColor || item.color);
-          const buttonNeon = item.active ? item.neon : (item.defaultColor ? '#8A7FD8' : item.neon);
+          const buttonNeon = item.active ? item.neon : (item.defaultColor ? '#9DB4E8' : item.neon);
           
           return (
             <Link
@@ -140,3 +140,4 @@ export default function BottomNav() {
     </nav>
   );
 }
+

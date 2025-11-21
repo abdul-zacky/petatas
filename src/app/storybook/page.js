@@ -14,7 +14,7 @@ export default function StorybookPage() {
   const moods = [
     { id: 'adventure', name: 'Petualangan', icon: Map, color: '#FFC857', neon: '#FFD700' },
     { id: 'wisdom', name: 'Kebijaksanaan', icon: Lightbulb, color: '#D4A373', neon: '#F4A460' },
-    { id: 'magical', name: 'Magis', icon: Wand2, color: '#473C8B', neon: '#8A7FD8' },
+    { id: 'magical', name: 'Magis', icon: Wand2, color: '#6379B9', neon: '#9DB4E8' },
     { id: 'heroic', name: 'Heroik', icon: Shield, color: '#2563eb', neon: '#60A5FA' },
     { id: 'mysterious', name: 'Misterius', icon: Moon, color: '#6366f1', neon: '#A78BFA' },
     { id: 'joyful', name: 'Riang', icon: PartyPopper, color: '#ec4899', neon: '#F472B6' },
@@ -69,14 +69,14 @@ export default function StorybookPage() {
       
       {/* Animated Background Grid */}
       <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: 'linear-gradient(#473C8B 1px, transparent 1px), linear-gradient(90deg, #473C8B 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(#6379B9 1px, transparent 1px), linear-gradient(90deg, #6379B9 1px, transparent 1px)',
         backgroundSize: '50px 50px',
         animation: 'gridMove 20s linear infinite'
       }} />
       
       {/* Floating Orbs */}
       <div className="absolute top-20 left-10 w-40 h-40 rounded-full blur-3xl opacity-20 animate-pulse" style={{
-        background: 'radial-gradient(circle, #473C8B 0%, transparent 70%)',
+        background: 'radial-gradient(circle, #6379B9 0%, transparent 70%)',
         animation: 'float 6s ease-in-out infinite'
       }} />
       <div className="absolute bottom-40 right-10 w-60 h-60 rounded-full blur-3xl opacity-20" style={{
@@ -102,24 +102,24 @@ export default function StorybookPage() {
           }}>
             {/* Neon glow effect */}
             <div className="absolute inset-0 opacity-30" style={{
-              background: 'radial-gradient(circle at 50% 0%, rgba(138, 127, 216, 0.2), transparent 70%)'
+              background: 'radial-gradient(circle at 50% 0%, rgba(99, 121, 185, 0.2), transparent 70%)'
             }} />
             
             <div className="relative z-10">
               <div className="flex justify-center mb-4">
                 <div className="relative">
                   <Loader2 className="w-16 h-16 animate-spin" style={{
-                    color: '#473C8B',
-                    filter: 'drop-shadow(0 0 8px rgba(138, 127, 216, 0.5))'
+                    color: '#6379B9',
+                    filter: 'drop-shadow(0 0 8px rgba(99, 121, 185, 0.5))'
                   }} />
                   <div className="absolute inset-0 animate-ping opacity-20">
-                    <Loader2 className="w-16 h-16" style={{color: '#8A7FD8'}} />
+                    <Loader2 className="w-16 h-16" style={{color: '#9DB4E8'}} />
                   </div>
                 </div>
               </div>
               <h3 className="text-xl font-bold mb-2" style={{
                 color: '#1B1B1E',
-                textShadow: '0 0 15px rgba(138, 127, 216, 0.3)'
+                textShadow: '0 0 15px rgba(99, 121, 185, 0.3)'
               }}>
                 Membuat Storybook...
               </h3>
@@ -140,25 +140,25 @@ export default function StorybookPage() {
           <div className="relative w-20 h-20 rounded-full flex items-center justify-center overflow-hidden" style={{
             background: 'rgba(255, 255, 255, 0.7)',
             backdropFilter: 'blur(10px)',
-            border: '2px solid rgba(138, 127, 216, 0.4)',
-            boxShadow: `0 0 30px rgba(138, 127, 216, 0.3),
-                       inset 0 0 20px rgba(138, 127, 216, 0.1)`
+            border: '2px solid rgba(99, 121, 185, 0.4)',
+            boxShadow: `0 0 30px rgba(99, 121, 185, 0.3),
+                       inset 0 0 20px rgba(99, 121, 185, 0.1)`
           }}>
             {/* Rotating ring */}
             <div className="absolute inset-0 animate-spin" style={{animationDuration: '3s'}}>
               <div className="w-full h-full rounded-full" style={{
-                background: 'conic-gradient(from 0deg, transparent, rgba(138, 127, 216, 0.6), transparent)'
+                background: 'conic-gradient(from 0deg, transparent, rgba(99, 121, 185, 0.6), transparent)'
               }} />
             </div>
             <BookOpen className="w-10 h-10 relative z-10" style={{
-              color: '#473C8B',
-              filter: 'drop-shadow(0 0 8px rgba(138, 127, 216, 0.5))'
+              color: '#6379B9',
+              filter: 'drop-shadow(0 0 8px rgba(99, 121, 185, 0.5))'
             }} />
           </div>
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold mb-3" style={{
-          textShadow: '0 0 20px rgba(138, 127, 216, 0.3), 0 0 40px rgba(138, 127, 216, 0.2)',
-          background: 'linear-gradient(135deg, #473C8B 0%, #8A7FD8 50%, #D4A373 100%)',
+          textShadow: '0 0 20px rgba(99, 121, 185, 0.3), 0 0 40px rgba(99, 121, 185, 0.2)',
+          background: 'linear-gradient(135deg, #6379B9 0%, #9DB4E8 50%, #D4A373 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text'
@@ -192,7 +192,7 @@ export default function StorybookPage() {
           <label className="block mb-3 relative z-10">
             <span className="text-lg font-semibold" style={{
               color: '#1B1B1E',
-              textShadow: '0 0 8px rgba(138, 127, 216, 0.2)'
+              textShadow: '0 0 8px rgba(99, 121, 185, 0.2)'
             }}>
               Topik Budaya
             </span>
@@ -210,7 +210,7 @@ export default function StorybookPage() {
             placeholder="Contoh: Cerita tentang tradisi Pacu Jalur Riau..."
             className="w-full px-4 py-3 rounded-xl border-2 focus:outline-none transition-all resize-none relative z-10"
             style={{
-              borderColor: 'rgba(138, 127, 216, 0.3)',
+              borderColor: 'rgba(99, 121, 185, 0.3)',
               color: '#1B1B1E',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
@@ -218,11 +218,11 @@ export default function StorybookPage() {
               boxShadow: 'inset 0 2px 10px rgba(0, 0, 0, 0.05)'
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = 'rgba(138, 127, 216, 0.6)';
-              e.target.style.boxShadow = '0 0 20px rgba(138, 127, 216, 0.25), inset 0 2px 10px rgba(0, 0, 0, 0.05)';
+              e.target.style.borderColor = 'rgba(99, 121, 185, 0.6)';
+              e.target.style.boxShadow = '0 0 20px rgba(99, 121, 185, 0.25), inset 0 2px 10px rgba(0, 0, 0, 0.05)';
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(138, 127, 216, 0.3)';
+              e.target.style.borderColor = 'rgba(99, 121, 185, 0.3)';
               e.target.style.boxShadow = 'inset 0 2px 10px rgba(0, 0, 0, 0.05)';
             }}
           />
@@ -268,20 +268,20 @@ export default function StorybookPage() {
         <div className="relative rounded-3xl p-6 overflow-hidden group" style={{
           background: 'rgba(255, 255, 255, 0.7)',
           backdropFilter: 'blur(20px)',
-          border: '2px solid rgba(138, 127, 216, 0.3)',
+          border: '2px solid rgba(99, 121, 185, 0.3)',
           boxShadow: `0 8px 32px rgba(0, 0, 0, 0.08),
-                     inset 0 0 20px rgba(138, 127, 216, 0.05)`
+                     inset 0 0 20px rgba(99, 121, 185, 0.05)`
         }}>
           {/* Animated border glow */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
-            background: 'linear-gradient(45deg, transparent, rgba(138, 127, 216, 0.15), transparent)',
+            background: 'linear-gradient(45deg, transparent, rgba(99, 121, 185, 0.15), transparent)',
             animation: 'borderGlow 3s linear infinite'
           }} />
           
           <label className="block mb-4 relative z-10">
             <span className="text-lg font-semibold" style={{
               color: '#1B1B1E',
-              textShadow: '0 0 8px rgba(138, 127, 216, 0.2)'
+              textShadow: '0 0 8px rgba(99, 121, 185, 0.2)'
             }}>
               Pilih Mood Cerita
             </span>
@@ -373,23 +373,23 @@ export default function StorybookPage() {
           style={{
             background: !topic.trim() || !selectedMood || isLoading
               ? 'rgba(71, 60, 139, 0.2)'
-              : 'linear-gradient(135deg, #473C8B 0%, #6B5FBD 100%)',
+              : 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)',
             color: 'white',
-            border: '2px solid rgba(138, 127, 216, 0.4)',
+            border: '2px solid rgba(99, 121, 185, 0.4)',
             boxShadow: !topic.trim() || !selectedMood || isLoading
               ? 'none'
-              : '0 0 30px rgba(138, 127, 216, 0.35), inset 0 0 20px rgba(138, 127, 216, 0.1)',
+              : '0 0 30px rgba(99, 121, 185, 0.35), inset 0 0 20px rgba(99, 121, 185, 0.1)',
             textShadow: '0 0 8px rgba(255, 255, 255, 0.4)'
           }}
           onMouseEnter={(e) => {
             if (topic.trim() && selectedMood && !isLoading) {
-              e.currentTarget.style.boxShadow = '0 0 40px rgba(138, 127, 216, 0.5), inset 0 0 30px rgba(138, 127, 216, 0.15)';
+              e.currentTarget.style.boxShadow = '0 0 40px rgba(99, 121, 185, 0.5), inset 0 0 30px rgba(99, 121, 185, 0.15)';
               e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
             }
           }}
           onMouseLeave={(e) => {
             if (topic.trim() && selectedMood && !isLoading) {
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(138, 127, 216, 0.35), inset 0 0 20px rgba(138, 127, 216, 0.1)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(99, 121, 185, 0.35), inset 0 0 20px rgba(99, 121, 185, 0.1)';
               e.currentTarget.style.transform = 'translateY(0) scale(1)';
             }
           }}
@@ -456,7 +456,7 @@ export default function StorybookPage() {
             <div className="relative">
               <h3 className="font-semibold mb-1" style={{
                 color: '#1B1B1E',
-                textShadow: '0 0 5px rgba(138, 127, 216, 0.15)'
+                textShadow: '0 0 5px rgba(99, 121, 185, 0.15)'
               }}>
                 Cerita Interaktif
               </h3>
@@ -470,29 +470,29 @@ export default function StorybookPage() {
           </div>
 
           <div className="relative flex items-start gap-3 p-4 rounded-2xl overflow-hidden group" style={{
-            background: 'rgba(138, 127, 216, 0.1)',
+            background: 'rgba(99, 121, 185, 0.1)',
             backdropFilter: 'blur(10px)',
-            border: '2px solid rgba(138, 127, 216, 0.25)',
+            border: '2px solid rgba(99, 121, 185, 0.25)',
             boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)'
           }}>
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
-              background: 'radial-gradient(circle at top left, rgba(138, 127, 216, 0.15), transparent 70%)'
+              background: 'radial-gradient(circle at top left, rgba(99, 121, 185, 0.15), transparent 70%)'
             }} />
             
             <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{
-              background: 'rgba(138, 127, 216, 0.15)',
-              border: '2px solid rgba(138, 127, 216, 0.3)',
-              boxShadow: '0 0 20px rgba(138, 127, 216, 0.2), inset 0 0 10px rgba(138, 127, 216, 0.05)'
+              background: 'rgba(99, 121, 185, 0.15)',
+              border: '2px solid rgba(99, 121, 185, 0.3)',
+              boxShadow: '0 0 20px rgba(99, 121, 185, 0.2), inset 0 0 10px rgba(99, 121, 185, 0.05)'
             }}>
               <Sparkles className="w-6 h-6" style={{
-                color: '#473C8B',
-                filter: 'drop-shadow(0 0 5px rgba(138, 127, 216, 0.4))'
+                color: '#6379B9',
+                filter: 'drop-shadow(0 0 5px rgba(99, 121, 185, 0.4))'
               }} />
             </div>
             <div className="relative">
               <h3 className="font-semibold mb-1" style={{
                 color: '#1B1B1E',
-                textShadow: '0 0 5px rgba(138, 127, 216, 0.15)'
+                textShadow: '0 0 5px rgba(99, 121, 185, 0.15)'
               }}>
                 Disesuaikan dengan Mood
               </h3>
@@ -509,3 +509,4 @@ export default function StorybookPage() {
     </div>
   );
 }
+

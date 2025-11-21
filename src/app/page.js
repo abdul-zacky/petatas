@@ -9,14 +9,14 @@ export default function Home() {
       <div className="fixed inset-0 pointer-events-none">
         {/* Animated Grid */}
         <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: 'linear-gradient(#473C8B 1px, transparent 1px), linear-gradient(90deg, #473C8B 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(#6379B9 1px, transparent 1px), linear-gradient(90deg, #6379B9 1px, transparent 1px)',
           backgroundSize: '50px 50px',
           animation: 'gridMove 20s linear infinite'
         }} />
 
         {/* Floating Orbs */}
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full opacity-30" style={{
-          background: 'radial-gradient(circle, rgba(138, 127, 216, 0.3), transparent 70%)',
+          background: 'radial-gradient(circle, rgba(99, 121, 185, 0.3), transparent 70%)',
           animation: 'float 8s ease-in-out infinite',
           filter: 'blur(40px)'
         }} />
@@ -39,48 +39,53 @@ export default function Home() {
             {/* Logo with glow effect */}
             <div className="flex justify-center -mb-4 relative">
               <div className="absolute inset-0 rounded-full opacity-30 blur-3xl" style={{
-                background: 'radial-gradient(circle, rgba(138, 127, 216, 0.4), transparent 70%)',
+                background: 'radial-gradient(circle, rgba(99, 121, 185, 0.4), transparent 70%)',
                 animation: 'float 6s ease-in-out infinite'
               }} />
-              <img src="/2.svg" alt="Petatas Icon" className="w-48 h-48 sm:w-64 sm:h-64 relative z-10" style={{
-                filter: 'drop-shadow(0 0 20px rgba(138, 127, 216, 0.3))',
+              <img src="/petatas-mascot.png" alt="Petatas Icon" className="w-48 h-48 sm:w-64 sm:h-64 relative z-10" style={{
+                filter: 'drop-shadow(0 0 20px rgba(99, 121, 185, 0.3))',
                 animation: 'float 8s ease-in-out infinite'
               }} />
             </div>
 
             {/* Title with shimmer effect */}
-            <h1 className="text-4xl sm:text-5xl font-bold leading-tight flex justify-center -my-4 relative">
-              <img src="/1.svg" alt="Petatas Logo" className="h-40 sm:h-48" style={{
-                filter: 'drop-shadow(0 0 15px rgba(138, 127, 216, 0.2))'
-              }} />
+            <h1 className="text-4xl sm:text-5xl font-bold leading-tight flex justify-center -my-4 relative" style={{
+              background: 'linear-gradient(135deg, #4F6BA8 0%, #7A8FD1 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              filter: 'drop-shadow(0 0 15px rgba(99, 121, 185, 0.2))',
+              fontSize: 'clamp(2.5rem, 10vw, 4rem)'
+            }}>
+              PETATAS
             </h1>
 
             {/* Description */}
             <p className="text-base sm:text-lg leading-relaxed" style={{
               color: '#1B1B1E',
-              textShadow: '0 0 10px rgba(138, 127, 216, 0.1)'
+              textShadow: '0 0 10px rgba(99, 121, 185, 0.1)'
             }}>
-              Perjalanan budaya interaktif yang menghidupkan cerita, artefak, dan tradisi melalui kekuatan AR, AI, dan teknologi 3D.
+              Ubah adopsi QRIS dari tugas jadi permainan. Dapatkan rewards, ajak komunitas, dan bangun ekonomi digital Papua bersama-sama.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col w-full gap-4 pt-2">
               <a 
-                href="/galeri"
+                href="/auth/signup"
                 className="relative w-full px-8 py-4 text-white font-bold rounded-2xl transition-all duration-300 overflow-hidden group text-base block text-center"
                 style={{
-                  background: 'linear-gradient(135deg, #473C8B 0%, #6B5FBD 100%)',
-                  border: '2px solid rgba(138, 127, 216, 0.4)',
-                  boxShadow: '0 0 30px rgba(138, 127, 216, 0.3)',
+                  background: 'linear-gradient(135deg, #4F6BA8 0%, #7A8FD1 100%)',
+                  border: '2px solid rgba(99, 121, 185, 0.4)',
+                  boxShadow: '0 0 30px rgba(99, 121, 185, 0.3)',
                   textShadow: '0 0 10px rgba(255, 255, 255, 0.5)'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 0 40px rgba(138, 127, 216, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 0 40px rgba(99, 121, 185, 0.5)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 0 30px rgba(138, 127, 216, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(99, 121, 185, 0.3)';
                 }}
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
@@ -129,3 +134,4 @@ export default function Home() {
     </div>
   );
 }
+

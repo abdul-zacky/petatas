@@ -26,12 +26,12 @@ function ARExperienceCard({ experience }) {
       <div className="relative rounded-2xl overflow-hidden transition-all cursor-pointer" style={{
         background: 'rgba(255, 255, 255, 0.7)',
         backdropFilter: 'blur(20px)',
-        border: '2px solid rgba(138, 127, 216, 0.25)',
+        border: '2px solid rgba(99, 121, 185, 0.25)',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)'
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-4px)';
-        e.currentTarget.style.boxShadow = '0 8px 32px rgba(138, 127, 216, 0.25)';
+        e.currentTarget.style.boxShadow = '0 8px 32px rgba(99, 121, 185, 0.25)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
@@ -40,7 +40,7 @@ function ARExperienceCard({ experience }) {
       >
         {/* Hover glow effect */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" style={{
-          background: 'radial-gradient(circle at center, rgba(138, 127, 216, 0.15), transparent 70%)'
+          background: 'radial-gradient(circle at center, rgba(99, 121, 185, 0.15), transparent 70%)'
         }} />
 
         {/* Thumbnail */}
@@ -68,17 +68,17 @@ function ARExperienceCard({ experience }) {
               height={24}
               className="rounded-full"
               style={{
-                border: '2px solid rgba(138, 127, 216, 0.3)',
-                boxShadow: '0 0 8px rgba(138, 127, 216, 0.2)'
+                border: '2px solid rgba(99, 121, 185, 0.3)',
+                boxShadow: '0 0 8px rgba(99, 121, 185, 0.2)'
               }}
             />
-            <p className="text-xs font-medium" style={{ color: '#6B5FBD' }}>@{experience.user.username}</p>
+            <p className="text-xs font-medium" style={{ color: '#7A8FD1' }}>@{experience.user.username}</p>
           </div>
 
           {/* Title */}
           <h3 className="font-bold text-sm mb-1 line-clamp-1" style={{
             color: '#1B1B1E',
-            textShadow: '0 0 10px rgba(138, 127, 216, 0.15)'
+            textShadow: '0 0 10px rgba(99, 121, 185, 0.15)'
           }}>
             {experience.title}
           </h3>
@@ -237,7 +237,7 @@ export default function GaleriPage() {
       <div className="fixed inset-0 pointer-events-none">
         {/* Floating Orbs */}
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full opacity-30" style={{
-          background: 'radial-gradient(circle, rgba(138, 127, 216, 0.3), transparent 70%)',
+          background: 'radial-gradient(circle, rgba(99, 121, 185, 0.3), transparent 70%)',
           animation: 'float 8s ease-in-out infinite',
           filter: 'blur(40px)'
         }} />
@@ -254,7 +254,7 @@ export default function GaleriPage() {
 
         {/* Animated Grid */}
         <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: 'linear-gradient(#473C8B 1px, transparent 1px), linear-gradient(90deg, #473C8B 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(#6379B9 1px, transparent 1px), linear-gradient(90deg, #6379B9 1px, transparent 1px)',
           backgroundSize: '50px 50px',
           animation: 'gridMove 20s linear infinite'
         }} />
@@ -264,7 +264,7 @@ export default function GaleriPage() {
       <header className="sticky top-0 z-10" style={{
         background: 'rgba(255, 255, 255, 0.85)',
         backdropFilter: 'blur(20px)',
-        borderBottom: '2px solid rgba(138, 127, 216, 0.2)',
+        borderBottom: '2px solid rgba(99, 121, 185, 0.2)',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)'
       }}>
         <div className="max-w-4xl mx-auto px-4 py-4">
@@ -272,12 +272,12 @@ export default function GaleriPage() {
           <div className="relative mb-4 rounded-2xl overflow-hidden" style={{
             background: 'rgba(255, 255, 255, 0.7)',
             backdropFilter: 'blur(20px)',
-            border: '2px solid rgba(138, 127, 216, 0.3)',
-            boxShadow: '0 0 20px rgba(138, 127, 216, 0.15)'
+            border: '2px solid rgba(99, 121, 185, 0.3)',
+            boxShadow: '0 0 20px rgba(99, 121, 185, 0.15)'
           }}>
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{
-              color: '#473C8B',
-              filter: 'drop-shadow(0 0 5px rgba(138, 127, 216, 0.4))'
+              color: '#6379B9',
+              filter: 'drop-shadow(0 0 5px rgba(99, 121, 185, 0.4))'
             }} />
             <input
               type="text"
@@ -298,13 +298,13 @@ export default function GaleriPage() {
               className="relative flex-1 py-3 px-4 rounded-2xl font-semibold transition-all overflow-hidden group"
               style={{
                 background: activeTab === 'ar'
-                  ? 'linear-gradient(135deg, #473C8B 0%, #6B5FBD 100%)'
+                  ? 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)'
                   : 'rgba(255, 255, 255, 0.6)',
                 color: activeTab === 'ar' ? 'white' : '#1B1B1E',
-                border: `2px solid ${activeTab === 'ar' ? 'rgba(138, 127, 216, 0.4)' : 'rgba(138, 127, 216, 0.25)'}`,
+                border: `2px solid ${activeTab === 'ar' ? 'rgba(99, 121, 185, 0.4)' : 'rgba(99, 121, 185, 0.25)'}`,
                 boxShadow: activeTab === 'ar'
-                  ? '0 0 30px rgba(138, 127, 216, 0.3)'
-                  : '0 0 15px rgba(138, 127, 216, 0.15)',
+                  ? '0 0 30px rgba(99, 121, 185, 0.3)'
+                  : '0 0 15px rgba(99, 121, 185, 0.15)',
                 backdropFilter: 'blur(10px)',
                 textShadow: activeTab === 'ar' ? '0 0 10px rgba(255, 255, 255, 0.5)' : 'none'
               }}
@@ -322,13 +322,13 @@ export default function GaleriPage() {
               className="relative flex-1 py-3 px-4 rounded-2xl font-semibold transition-all overflow-hidden group"
               style={{
                 background: activeTab === 'storybook'
-                  ? 'linear-gradient(135deg, #473C8B 0%, #6B5FBD 100%)'
+                  ? 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)'
                   : 'rgba(255, 255, 255, 0.6)',
                 color: activeTab === 'storybook' ? 'white' : '#1B1B1E',
-                border: `2px solid ${activeTab === 'storybook' ? 'rgba(138, 127, 216, 0.4)' : 'rgba(138, 127, 216, 0.25)'}`,
+                border: `2px solid ${activeTab === 'storybook' ? 'rgba(99, 121, 185, 0.4)' : 'rgba(99, 121, 185, 0.25)'}`,
                 boxShadow: activeTab === 'storybook'
-                  ? '0 0 30px rgba(138, 127, 216, 0.3)'
-                  : '0 0 15px rgba(138, 127, 216, 0.15)',
+                  ? '0 0 30px rgba(99, 121, 185, 0.3)'
+                  : '0 0 15px rgba(99, 121, 185, 0.15)',
                 backdropFilter: 'blur(10px)',
                 textShadow: activeTab === 'storybook' ? '0 0 10px rgba(255, 255, 255, 0.5)' : 'none'
               }}
@@ -351,18 +351,18 @@ export default function GaleriPage() {
           <div className="text-center py-12 relative rounded-3xl overflow-hidden" style={{
             background: 'rgba(255, 255, 255, 0.7)',
             backdropFilter: 'blur(20px)',
-            border: '2px solid rgba(138, 127, 216, 0.25)',
+            border: '2px solid rgba(99, 121, 185, 0.25)',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)'
           }}>
             <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
-              background: 'radial-gradient(circle at center, rgba(138, 127, 216, 0.2), transparent 70%)'
+              background: 'radial-gradient(circle at center, rgba(99, 121, 185, 0.2), transparent 70%)'
             }} />
             <p className="text-lg font-bold relative z-10" style={{
               color: '#1B1B1E',
-              textShadow: '0 0 15px rgba(138, 127, 216, 0.2)'
+              textShadow: '0 0 15px rgba(99, 121, 185, 0.2)'
             }}>Tidak ada hasil ditemukan</p>
             <p className="text-sm mt-2 relative z-10" style={{
-              color: '#6B5FBD'
+              color: '#7A8FD1'
             }}>Coba kata kunci lain</p>
           </div>
         ) : (
@@ -417,3 +417,4 @@ export default function GaleriPage() {
     </div>
   );
 }
+
