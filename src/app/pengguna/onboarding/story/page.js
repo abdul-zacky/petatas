@@ -31,25 +31,25 @@ export default function PenggunaStoryPage() {
       icon: Sparkles,
       title: 'Kenalan dengan QRIS',
       description: `Hai ${userData?.nama || 'Kak'}! QRIS adalah cara bayar yang super praktis. Tinggal scan QR, bayar tanpa ribet kembalian!`,
-      illustration: '📱'
+      image: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: Zap,
       title: 'Cepat & Aman',
       description: 'Ga perlu antri lama, ga khawatir uang hilang. Semua transaksi tercatat dengan aman dan real-time!',
-      illustration: '⚡'
+      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: Gift,
       title: 'Dapat Hadiah!',
       description: 'Setiap transaksi QRIS, Anda bisa dapat poin dan cashback. Kumpulin poin, tukar hadiah menarik!',
-      illustration: '🎁'
+      image: 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=800&h=1000&fit=crop&q=80'
     },
     {
       icon: ArrowRight,
       title: 'Yuk Mulai!',
       description: 'Siap jelajahi dunia pembayaran digital? Mari kita mulai perjalanan QRIS Anda!',
-      illustration: '🚀'
+      image: 'https://images.unsplash.com/photo-1559526324-593bc073d938?w=800&h=1000&fit=crop&q=80'
     }
   ];
 
@@ -124,8 +124,9 @@ export default function PenggunaStoryPage() {
       </div>
 
       {/* Story Content */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-lg mx-auto relative z-10">
-        <div className="w-full relative rounded-3xl p-8 overflow-hidden" style={{
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md mx-auto relative z-10 px-2">
+        {/* Image Carousel Card */}
+        <div className="w-full relative rounded-3xl overflow-hidden" style={{
           background: 'rgba(255, 255, 255, 0.8)',
           backdropFilter: 'blur(20px)',
           border: '2px solid rgba(99, 121, 185, 0.3)',
@@ -135,76 +136,82 @@ export default function PenggunaStoryPage() {
             background: 'radial-gradient(circle at top, rgba(99, 121, 185, 0.3), transparent 70%)'
           }} />
 
-          {/* Illustration */}
-          <div className="flex justify-center mb-6">
-            <div className="text-7xl animate-bounce">
-              {slide.illustration}
-            </div>
+          {/* Image with 4:5 ratio */}
+          <div className="relative w-full" style={{ paddingBottom: '125%' }}>
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            {/* Gradient overlay for better text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           </div>
 
-          {/* Icon */}
-          <div className="flex justify-center mb-4">
-            <div className="relative w-16 h-16 rounded-full flex items-center justify-center" style={{
-              background: 'rgba(255, 255, 255, 0.7)',
-              border: '2px solid rgba(99, 121, 185, 0.4)',
-              boxShadow: '0 0 30px rgba(99, 121, 185, 0.3), inset 0 0 20px rgba(99, 121, 185, 0.1)'
+          {/* Content overlay on image */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            {/* Icon */}
+            <div className="flex justify-center mb-3">
+              <div className="relative w-12 h-12 rounded-full flex items-center justify-center" style={{
+                background: 'rgba(255, 255, 255, 0.9)',
+                border: '2px solid rgba(99, 121, 185, 0.4)',
+                boxShadow: '0 0 20px rgba(99, 121, 185, 0.3)'
+              }}>
+                <SlideIcon className="w-6 h-6" style={{
+                  color: '#6379B9',
+                  filter: 'drop-shadow(0 0 6px rgba(99, 121, 185, 0.5))'
+                }} />
+              </div>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl font-bold text-center mb-2" style={{
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
             }}>
-              <SlideIcon className="w-8 h-8" style={{
-                color: '#6379B9',
-                filter: 'drop-shadow(0 0 8px rgba(99, 121, 185, 0.5))'
+              {slide.title}
+            </h2>
+
+            {/* Description */}
+            <p className="text-sm text-center leading-relaxed mb-4" style={{
+              textShadow: '0 1px 5px rgba(0, 0, 0, 0.5)'
+            }}>
+              {slide.description}
+            </p>
+
+            {/* Next Button */}
+            <button
+              onClick={handleNext}
+              className="w-full relative py-3 rounded-xl font-bold text-base text-white transition-all duration-300 overflow-hidden group"
+              style={{
+                background: 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)',
+                border: '2px solid rgba(99, 121, 185, 0.4)',
+                boxShadow: '0 0 30px rgba(99, 121, 185, 0.35)',
+                textShadow: '0 0 8px rgba(255, 255, 255, 0.4)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(99, 121, 185, 0.5)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 30px rgba(99, 121, 185, 0.35)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
+                background: 'linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                animation: 'shimmer 2s infinite'
               }} />
-            </div>
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {currentSlide < slides.length - 1 ? (
+                  <>
+                    Lanjut
+                    <ChevronRight className="w-5 h-5" />
+                  </>
+                ) : (
+                  'Mulai Sekarang!'
+                )}
+              </span>
+            </button>
           </div>
-
-          {/* Title */}
-          <h2 className="text-2xl font-bold text-center mb-4 relative z-10" style={{
-            color: '#1B1B1E',
-            textShadow: '0 0 15px rgba(99, 121, 185, 0.2)'
-          }}>
-            {slide.title}
-          </h2>
-
-          {/* Description */}
-          <p className="text-base text-center leading-relaxed mb-8 relative z-10" style={{
-            color: '#8B7355'
-          }}>
-            {slide.description}
-          </p>
-
-          {/* Next Button */}
-          <button
-            onClick={handleNext}
-            className="w-full relative py-3.5 rounded-xl font-bold text-base text-white transition-all duration-300 overflow-hidden group"
-            style={{
-              background: 'linear-gradient(135deg, #6379B9 0%, #7A8FD1 100%)',
-              border: '2px solid rgba(99, 121, 185, 0.4)',
-              boxShadow: '0 0 30px rgba(99, 121, 185, 0.35)',
-              textShadow: '0 0 8px rgba(255, 255, 255, 0.4)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 40px rgba(99, 121, 185, 0.5)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(99, 121, 185, 0.35)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
-              background: 'linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
-              animation: 'shimmer 2s infinite'
-            }} />
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              {currentSlide < slides.length - 1 ? (
-                <>
-                  Lanjut
-                  <ChevronRight className="w-5 h-5" />
-                </>
-              ) : (
-                'Mulai Sekarang!'
-              )}
-            </span>
-          </button>
         </div>
 
         {/* Progress Dots */}
